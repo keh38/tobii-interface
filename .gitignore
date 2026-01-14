@@ -1,3 +1,8 @@
 /tobii-interface/obj
 /tobii-interface/bin
 /.vs
+/SimplePerformanceChart/.vs
+/SimplePerformanceChart/SimplePerfChart/obj
+/SimplePerformanceChart/SimplePerfChart/bin
+/SimplePerformanceChart/SpPerfChart/obj
+/SimplePerformanceChart/SpPerfChart/bin
