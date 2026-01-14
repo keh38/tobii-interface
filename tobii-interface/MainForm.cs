@@ -95,6 +95,7 @@ namespace tobii_interface
 
         private void GazeDataReceived(object? sender, GazeDataEventArgs args)
         {
+            pupilChart.AddValue((decimal)args.LeftEye.GazePoint.PositionOnDisplayArea.Y);
             //var pt = args.LeftEye.GazePoint;
             //Invoke(new Action(() => textBox1.Text = $"{pt.PositionOnDisplayArea.X}, {pt.PositionOnDisplayArea.X}"));
         }
@@ -162,6 +163,16 @@ namespace tobii_interface
         private void button1_Click(object sender, EventArgs e)
         {
             Calibrate();
+        }
+
+        private void runButton_Click(object sender, EventArgs e)
+        {
+            _eyeTracker.GazeDataReceived += GazeDataReceived;
+        }
+
+        private void stopButton_Click(object sender, EventArgs e)
+        {
+            _eyeTracker.GazeDataReceived -= GazeDataReceived;
         }
     }
 }
