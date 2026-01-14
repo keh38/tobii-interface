@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.13.35931.197
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "tobii-interface", "tobii-interface\tobii-interface.csproj", "{54961DAF-B253-4D1D-85B7-FE4D93DF3371}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Debug|x64 = Debug|x64
+		Release|Any CPU = Release|Any CPU
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{54961DAF-B253-4D1D-85B7-FE4D93DF3371}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{54961DAF-B253-4D1D-85B7-FE4D93DF3371}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{54961DAF-B253-4D1D-85B7-FE4D93DF3371}.Debug|x64.ActiveCfg = Debug|x64
+		{54961DAF-B253-4D1D-85B7-FE4D93DF3371}.Debug|x64.Build.0 = Debug|x64
+		{54961DAF-B253-4D1D-85B7-FE4D93DF3371}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{54961DAF-B253-4D1D-85B7-FE4D93DF3371}.Release|Any CPU.Build.0 = Release|Any CPU
+		{54961DAF-B253-4D1D-85B7-FE4D93DF3371}.Release|x64.ActiveCfg = Release|x64
+		{54961DAF-B253-4D1D-85B7-FE4D93DF3371}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {1FAC5FD1-A785-43B5-A68D-6579038E4DAC}
+	EndGlobalSection
+EndGlobal
