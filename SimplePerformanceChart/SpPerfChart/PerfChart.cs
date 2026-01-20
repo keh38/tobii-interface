@@ -54,6 +54,7 @@ namespace SpPerfChart
     }
 
 
+    [System.Runtime.Versioning.SupportedOSPlatform("windows")]
     public partial class PerfChart : UserControl
     {
         #region *** Constants ***
@@ -79,13 +80,14 @@ namespace SpPerfChart
         private float fineValueSpacing = 0.5f; // pixels/frame
         private float lastX;
         // The currently highest displayed value, required for Relative Scale Mode
-        private decimal currentMaxValue = 0;
+        private double _currentMaxValue = 0;
+        private double _currentMinValue = 0;
         // Offset value for the scrolling grid
         private int gridScrollOffset = 0;
         private float fineGridScrollOffset = 0;
         private float _fineGridOrigin = 0;
         // The current average value
-        private decimal averageValue = 0;
+        private double averageValue = 0;
         // Border Style
         private Border3DStyle b3dstyle = Border3DStyle.Sunken;
         // Scale mode for value aspect ratio
@@ -93,13 +95,14 @@ namespace SpPerfChart
         // Timer Mode
         private TimerMode timerMode;
         // List of stored values
-        private List<decimal> drawValues;// = new List<decimal>(MAX_VALUE_COUNT);
+        private List<double[]> drawValues;// = new List<decimal>(MAX_VALUE_COUNT);
         // Value queue for Timer Modes
-        private Queue<decimal> waitingValues = new Queue<decimal>();
+        private Queue<double[]> waitingValues = new Queue<double[]>();
         // Style and Design
         private PerfChartStyle perfChartStyle;
 
-        private decimal _maxValue = 100;
+        private double _maxValue = 100;
+        private double _minValue = -100;
         private string _maxFormat = "F1";
 
         #endregion
@@ -123,7 +126,7 @@ namespace SpPerfChart
 
             this.Font = SystemInformation.MenuFont;
 
-            drawValues = new List<decimal>(_maxValueCount);
+            drawValues = new List<double[]>(_maxValueCount);
     }
 
     #endregion
@@ -160,14 +163,22 @@ namespace SpPerfChart
             set
             {
                 _maxValueCount = value;
-                drawValues = new List<decimal>(_maxValueCount);
+                drawValues = new List<double[]>(_maxValueCount);
             }
         }
 
-        public decimal Max
+        public int NumberOfLines { get; set; } = 1;
+
+        public double Max
         {
             get { return _maxValue; }
             set { _maxValue = value; }
+        }
+
+        public double Min
+        {
+            get { return _minValue; }
+            set { _minValue = value; }
         }
 
         public string Format
@@ -232,13 +243,17 @@ namespace SpPerfChart
         /// Adds a value to the Chart Line
         /// </summary>
         /// <param name="value">progress value</param>
-        public void AddValue(decimal value) {
+        public void AddValue(params double[] value) {
             //if (scaleMode == ScaleMode.Absolute && value > 100M)
             //    throw new Exception(String.Format("Values greater then 100 not allowed in ScaleMode: Absolute ({0})", value));
-            if (scaleMode == ScaleMode.Absolute && value > _maxValue)
-                value = _maxValue;
-//                throw new Exception(String.Format("Values greater then 100 not allowed in ScaleMode: Absolute ({0})", value));
-
+            if (scaleMode == ScaleMode.Absolute)
+            {
+                for (int k = 0; k < value.Length; k++)
+                    if (value[k] < _minValue)
+                        value[k] = _minValue;
+                    else if (value[k] > _maxValue)
+                        value[k] = _maxValue;
+            }
 
             switch (timerMode) {
                 case TimerMode.Disabled:
@@ -270,7 +285,8 @@ namespace SpPerfChart
         /// Add value to the queue for a timed refresh
         /// </summary>
         /// <param name="value"></param>
-        private void AddValueToQueue(decimal value) {
+        private void AddValueToQueue(params double[] value) 
+        {
             waitingValues.Enqueue(value);
         }
 
@@ -279,7 +295,7 @@ namespace SpPerfChart
         /// Appends value <paramref name="value"/> to the chart (without redrawing)
         /// </summary>
         /// <param name="value">performance value</param>
-        private void ChartAppend(decimal value) {
+        private void ChartAppend(double[] value) {
             // Insert at first position; Negative values are flatten to 0 (zero)
 //            drawValues.Insert(0, Math.Max(value, 0));
             drawValues.Insert(0, value);
@@ -319,18 +335,18 @@ namespace SpPerfChart
                 else if (timerMode == TimerMode.SynchronizedAverage ||
                          timerMode == TimerMode.SynchronizedSum) {
                     // appendValue variable is used for calculating the average or sum value
-                    decimal appendValue = Decimal.Zero;
+                    double appendValue = 0;
                     int valueCount = waitingValues.Count;
 
-                    while (waitingValues.Count > 0)
-                        appendValue += waitingValues.Dequeue();
+                    //while (waitingValues.Count > 0)
+                    //    appendValue += waitingValues.Dequeue();
 
-                    // Calculate Average value in SynchronizedAverage Mode
-                    if (timerMode == TimerMode.SynchronizedAverage)
-                        appendValue = appendValue / (decimal)valueCount;
+                    //// Calculate Average value in SynchronizedAverage Mode
+                    //if (timerMode == TimerMode.SynchronizedAverage)
+                    //    appendValue = appendValue / (double)valueCount;
 
-                    // Finally append the value
-                    ChartAppend(appendValue);
+                    //// Finally append the value
+                    //ChartAppend(appendValue);
                 }
             }
             else {
@@ -348,16 +364,26 @@ namespace SpPerfChart
         /// </summary>
         /// <param name="value">performance value</param>
         /// <returns>vertical Point position in Pixels</returns>
-        private int CalcVerticalPosition(decimal value) {
-            decimal result = Decimal.Zero;
+        private int CalcVerticalPosition(double value) 
+        {
+            if (double.IsNaN(value))
+            {
+                return -1;
+            }    
+
+            double result = -1;
             int offset = 5;
 
             if (scaleMode == ScaleMode.Absolute)
+            {
                 result = value * (this.Height - offset) / _maxValue;
+            }
             else if (scaleMode == ScaleMode.Relative)
             {
-                result = (currentMaxValue > 0) ? (value * (this.Height-offset) / currentMaxValue) : 0;
+                result = (_currentMaxValue > _currentMinValue) ? ((value - _currentMinValue) * (this.Height - offset) / (_currentMaxValue - _currentMinValue)) : 0;
             }
+
+            if (result < 0) return -1;
 
             result = this.Height - result;
 
@@ -369,16 +395,37 @@ namespace SpPerfChart
         /// Returns the currently highest (displayed) value, for Relative ScaleMode
         /// </summary>
         /// <returns></returns>
-        private decimal GetHighestValueForRelativeMode() {
-            decimal maxValue = 0;
+        private double GetMaximumValueForRelativeMode()
+        {
+            double maxValue = double.NegativeInfinity;
 
-            for (int i = 0; i < visibleValues; i++) {
-                // Set if higher then previous max value
-                if (drawValues[i] > maxValue)
-                    maxValue = drawValues[i];
+            for (int i = 0; i < visibleValues; i++)
+            {
+                for (int k = 0; k < NumberOfLines; k++)
+                {
+                    // Set if higher then previous max value
+                    if (drawValues[i][k] > maxValue)
+                        maxValue = drawValues[i][k];
+                }
             }
 
             return maxValue;
+        }
+
+        private double GetMinimumValueForRelativeMode()
+        {
+            double minValue = double.PositiveInfinity;
+
+            for (int i = 0; i < visibleValues; i++)
+            {
+                for (int k = 0; k < NumberOfLines; k++)
+                {
+                    if (drawValues[i][k] < minValue)
+                        minValue = drawValues[i][k];
+                }
+            }
+
+            return minValue;
         }
 
         #endregion
@@ -396,56 +443,68 @@ namespace SpPerfChart
             visibleValues = Math.Min(this.Width * (int)(1 / fineValueSpacing), drawValues.Count);
 
             if (scaleMode == ScaleMode.Relative || _maxValue < 100)
-                currentMaxValue = GetHighestValueForRelativeMode();
-
-            // Dirty little "trick": initialize the first previous Point outside the bounds
-            Point previousPoint = new Point(Width + valueSpacing, Height);
-            lastX = Width + fineValueSpacing;
-            Point currentPoint = new Point();
+            {
+                _currentMaxValue = GetMaximumValueForRelativeMode();
+                _currentMinValue = GetMinimumValueForRelativeMode();
+            }
 
             // Only draw average line when possible (visibleValues) and needed (style setting)
-            if (visibleValues > 0 && perfChartStyle.ShowAverageLine) {
-                averageValue = 0;
-                DrawAverageLine(g);
-            }
+            //if (visibleValues > 0 && perfChartStyle.ShowAverageLine) {
+            //    averageValue = 0;
+            //    DrawAverageLine(g);
+            //}
 
             // Connect all visible values with lines
-            for (int i = 0; i < visibleValues; i++) {
-                //                currentPoint.X = previousPoint.X - valueSpacing;
-                lastX -= fineValueSpacing;
-                currentPoint.X = (int) Math.Ceiling(lastX);
-                currentPoint.Y = CalcVerticalPosition(drawValues[i] >= 0 ? drawValues[i] : -(drawValues[i]+1));
+            for (int k = 0; k < NumberOfLines; k++)
+            {
+                // Dirty little "trick": initialize the first previous Point outside the bounds
+                Point previousPoint = new Point(Width + valueSpacing, Height);
+                lastX = Width + fineValueSpacing;
+                Point currentPoint = new Point();
 
-                // Actually draw the line
-                g.DrawLine(perfChartStyle.ChartLinePen.Pen, previousPoint, currentPoint);
+                var pen = perfChartStyle.ChartLinePen.Pen;
+                pen.Color = (k == 0) ? Color.Blue : Color.Red;
 
-                if (drawValues[i] < 0)
+                for (int i = 0; i < visibleValues; i++)
                 {
-                    g.DrawLine(perfChartStyle.RefLinePen.Pen, currentPoint.X, 0, currentPoint.X, this.Height);
+                    lastX -= fineValueSpacing;
+                    currentPoint.X = (int)Math.Ceiling(lastX);
+                    currentPoint.Y = CalcVerticalPosition(drawValues[i][k]);
+
+                    // Actually draw the line
+                    if (currentPoint.Y > 0)
+                    {
+                        g.DrawLine(pen, previousPoint, currentPoint);
+                    }
+
+                    //if (drawValues[i] < 0)
+                    //{
+                    //    g.DrawLine(perfChartStyle.RefLinePen.Pen, currentPoint.X, 0, currentPoint.X, this.Height);
+                    //}
+
+                    previousPoint = currentPoint;
                 }
-
-                previousPoint = currentPoint;
             }
-
             // Draw current relative maximum value stirng
-            if (scaleMode == ScaleMode.Relative || _maxValue < 100) {
-                SolidBrush sb = new SolidBrush(perfChartStyle.ChartLinePen.Color);
-                g.DrawString(currentMaxValue.ToString(_maxFormat), this.Font, sb, 4.0f, 2.0f);
-            }
+            //if (scaleMode == ScaleMode.Relative || _maxValue < 100) {
+            //    SolidBrush sb = new SolidBrush(perfChartStyle.ChartLinePen.Color);
+            //    g.DrawString(currentMaxValue.ToString(_maxFormat), this.Font, sb, 4.0f, 2.0f);
+            //}
 
             // Draw Border on top
             ControlPaint.DrawBorder3D(g, 0, 0, Width, Height, b3dstyle);
         }
 
 
-        private void DrawAverageLine(Graphics g) {
-            for (int i = 0; i < visibleValues; i++)
-                averageValue += drawValues[i];
+        private void DrawAverageLine(Graphics g) 
+        {
+            //for (int i = 0; i < visibleValues; i++)
+            //    averageValue += drawValues[i];
 
-            averageValue = averageValue / visibleValues;
+            //averageValue = averageValue / visibleValues;
 
-            int verticalPosition = CalcVerticalPosition(averageValue);
-            g.DrawLine(perfChartStyle.AvgLinePen.Pen, 0, verticalPosition, Width, verticalPosition);
+            //int verticalPosition = CalcVerticalPosition(averageValue);
+            //g.DrawLine(perfChartStyle.AvgLinePen.Pen, 0, verticalPosition, Width, verticalPosition);
         }
 
         /// <summary>

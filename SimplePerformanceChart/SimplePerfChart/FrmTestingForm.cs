@@ -9,6 +9,7 @@ using System.Threading;
 
 namespace SimplePerfChart
 {
+    [System.Runtime.Versioning.SupportedOSPlatform("windows")]
     public partial class FrmTestingForm : Form
     {
         private object valueGenSync = new object();
@@ -28,6 +29,7 @@ namespace SimplePerfChart
 
             // Apply default Properties
             perfChart.TimerInterval = 1000;
+            perfChart.NumberOfLines = 2;
 
             // Populate DrowDown Boxes
             foreach (String item in System.Enum.GetNames(typeof(Border3DStyle))) {
@@ -66,7 +68,7 @@ namespace SimplePerfChart
         private void bgWrkTimer_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e) {
             int genValue = randGen.Next(valueGenFrom, valueGenTo);
 
-            perfChart.AddValue(genValue);
+            perfChart.AddValue(genValue, genValue + 25);
 
             if (chkBxTimerEnabled.Checked) {
                 //Simply restart, if still enabled

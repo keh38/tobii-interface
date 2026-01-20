@@ -24,448 +24,446 @@
         /// Erforderliche Methode für die Designerunterstützung.
         /// Der Inhalt der Methode darf nicht mit dem Code-Editor geändert werden.
         /// </summary>
-        private void InitializeComponent() {
+        private void InitializeComponent()
+        {
             SpPerfChart.ChartPen chartPen1 = new SpPerfChart.ChartPen();
             SpPerfChart.ChartPen chartPen2 = new SpPerfChart.ChartPen();
             SpPerfChart.ChartPen chartPen3 = new SpPerfChart.ChartPen();
             SpPerfChart.ChartPen chartPen4 = new SpPerfChart.ChartPen();
-            this.grpBxChart = new System.Windows.Forms.GroupBox();
-            this.perfChart = new SpPerfChart.PerfChart();
-            this.grpBxRandVal = new System.Windows.Forms.GroupBox();
-            this.chkBxTimerEnabled = new System.Windows.Forms.CheckBox();
-            this.label5 = new System.Windows.Forms.Label();
-            this.numUpDnToInterval = new System.Windows.Forms.NumericUpDown();
-            this.numUpDnFromInterval = new System.Windows.Forms.NumericUpDown();
-            this.label3 = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
-            this.grpBxValueGen = new System.Windows.Forms.GroupBox();
-            this.numUpDnValTo = new System.Windows.Forms.NumericUpDown();
-            this.numUpDnValFrom = new System.Windows.Forms.NumericUpDown();
-            this.label4 = new System.Windows.Forms.Label();
-            this.label6 = new System.Windows.Forms.Label();
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.label11 = new System.Windows.Forms.Label();
-            this.numUpDnTimerInterval = new System.Windows.Forms.NumericUpDown();
-            this.label10 = new System.Windows.Forms.Label();
-            this.label9 = new System.Windows.Forms.Label();
-            this.cmbBxTimerMode = new System.Windows.Forms.ComboBox();
-            this.label8 = new System.Windows.Forms.Label();
-            this.cmbBxScaleMode = new System.Windows.Forms.ComboBox();
-            this.label7 = new System.Windows.Forms.Label();
-            this.cmbBxBorder = new System.Windows.Forms.ComboBox();
-            this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.propGrid = new System.Windows.Forms.PropertyGrid();
-            this.bgWrkTimer = new System.ComponentModel.BackgroundWorker();
-            this.btnApply = new System.Windows.Forms.Button();
-            this.btnClear = new System.Windows.Forms.Button();
-            this.grpBxChart.SuspendLayout();
-            this.grpBxRandVal.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numUpDnToInterval)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numUpDnFromInterval)).BeginInit();
-            this.grpBxValueGen.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numUpDnValTo)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numUpDnValFrom)).BeginInit();
-            this.groupBox1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numUpDnTimerInterval)).BeginInit();
-            this.groupBox2.SuspendLayout();
-            this.SuspendLayout();
+            SpPerfChart.ChartPen chartPen5 = new SpPerfChart.ChartPen();
+            grpBxChart = new System.Windows.Forms.GroupBox();
+            perfChart = new SpPerfChart.PerfChart();
+            grpBxRandVal = new System.Windows.Forms.GroupBox();
+            chkBxTimerEnabled = new System.Windows.Forms.CheckBox();
+            label5 = new System.Windows.Forms.Label();
+            numUpDnToInterval = new System.Windows.Forms.NumericUpDown();
+            numUpDnFromInterval = new System.Windows.Forms.NumericUpDown();
+            label3 = new System.Windows.Forms.Label();
+            label2 = new System.Windows.Forms.Label();
+            grpBxValueGen = new System.Windows.Forms.GroupBox();
+            numUpDnValTo = new System.Windows.Forms.NumericUpDown();
+            numUpDnValFrom = new System.Windows.Forms.NumericUpDown();
+            label4 = new System.Windows.Forms.Label();
+            label6 = new System.Windows.Forms.Label();
+            groupBox1 = new System.Windows.Forms.GroupBox();
+            label11 = new System.Windows.Forms.Label();
+            numUpDnTimerInterval = new System.Windows.Forms.NumericUpDown();
+            label10 = new System.Windows.Forms.Label();
+            label9 = new System.Windows.Forms.Label();
+            cmbBxTimerMode = new System.Windows.Forms.ComboBox();
+            label8 = new System.Windows.Forms.Label();
+            cmbBxScaleMode = new System.Windows.Forms.ComboBox();
+            label7 = new System.Windows.Forms.Label();
+            cmbBxBorder = new System.Windows.Forms.ComboBox();
+            groupBox2 = new System.Windows.Forms.GroupBox();
+            propGrid = new System.Windows.Forms.PropertyGrid();
+            bgWrkTimer = new System.ComponentModel.BackgroundWorker();
+            btnApply = new System.Windows.Forms.Button();
+            btnClear = new System.Windows.Forms.Button();
+            grpBxChart.SuspendLayout();
+            grpBxRandVal.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)numUpDnToInterval).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)numUpDnFromInterval).BeginInit();
+            grpBxValueGen.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)numUpDnValTo).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)numUpDnValFrom).BeginInit();
+            groupBox1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)numUpDnTimerInterval).BeginInit();
+            groupBox2.SuspendLayout();
+            SuspendLayout();
             // 
             // grpBxChart
             // 
-            this.grpBxChart.Controls.Add(this.perfChart);
-            this.grpBxChart.Location = new System.Drawing.Point(12, 12);
-            this.grpBxChart.Name = "grpBxChart";
-            this.grpBxChart.Padding = new System.Windows.Forms.Padding(6);
-            this.grpBxChart.Size = new System.Drawing.Size(259, 141);
-            this.grpBxChart.TabIndex = 0;
-            this.grpBxChart.TabStop = false;
-            this.grpBxChart.Text = "Chart";
+            grpBxChart.Controls.Add(perfChart);
+            grpBxChart.Location = new System.Drawing.Point(14, 14);
+            grpBxChart.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            grpBxChart.Name = "grpBxChart";
+            grpBxChart.Padding = new System.Windows.Forms.Padding(7, 7, 7, 7);
+            grpBxChart.Size = new System.Drawing.Size(302, 163);
+            grpBxChart.TabIndex = 0;
+            grpBxChart.TabStop = false;
+            grpBxChart.Text = "Chart";
             // 
             // perfChart
             // 
-            this.perfChart.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.perfChart.Location = new System.Drawing.Point(6, 19);
-            this.perfChart.Name = "perfChart";
-            this.perfChart.PerfChartStyle.AntiAliasing = true;
+            perfChart.Dock = System.Windows.Forms.DockStyle.Fill;
+            perfChart.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.World);
+            perfChart.Format = "F1";
+            perfChart.Location = new System.Drawing.Point(7, 23);
+            perfChart.Margin = new System.Windows.Forms.Padding(5, 3, 5, 3);
+            perfChart.Max = 100D;
+            perfChart.MaxValueCount = 10000;
+            perfChart.Min = -100D;
+            perfChart.Name = "perfChart";
+            perfChart.NumberOfLines = 1;
+            perfChart.PerfChartStyle.AntiAliasing = true;
             chartPen1.Color = System.Drawing.Color.LightGreen;
             chartPen1.DashStyle = System.Drawing.Drawing2D.DashStyle.Dash;
             chartPen1.Width = 1F;
-            this.perfChart.PerfChartStyle.AvgLinePen = chartPen1;
-            this.perfChart.PerfChartStyle.BackgroundColorBottom = System.Drawing.Color.DarkOliveGreen;
-            this.perfChart.PerfChartStyle.BackgroundColorTop = System.Drawing.Color.YellowGreen;
+            perfChart.PerfChartStyle.AvgLinePen = chartPen1;
+            perfChart.PerfChartStyle.BackgroundColorBottom = System.Drawing.Color.DarkOliveGreen;
+            perfChart.PerfChartStyle.BackgroundColorTop = System.Drawing.Color.YellowGreen;
             chartPen2.Color = System.Drawing.Color.Gold;
             chartPen2.DashStyle = System.Drawing.Drawing2D.DashStyle.Solid;
             chartPen2.Width = 1F;
-            this.perfChart.PerfChartStyle.ChartLinePen = chartPen2;
+            perfChart.PerfChartStyle.ChartLinePen = chartPen2;
             chartPen3.Color = System.Drawing.Color.DarkOliveGreen;
             chartPen3.DashStyle = System.Drawing.Drawing2D.DashStyle.Dot;
             chartPen3.Width = 1F;
-            this.perfChart.PerfChartStyle.HorizontalGridPen = chartPen3;
-            this.perfChart.PerfChartStyle.ShowAverageLine = true;
-            this.perfChart.PerfChartStyle.ShowHorizontalGridLines = true;
-            this.perfChart.PerfChartStyle.ShowVerticalGridLines = true;
-            chartPen4.Color = System.Drawing.Color.DarkOliveGreen;
-            chartPen4.DashStyle = System.Drawing.Drawing2D.DashStyle.Dot;
+            perfChart.PerfChartStyle.HorizontalGridPen = chartPen3;
+            chartPen4.Color = System.Drawing.Color.Black;
+            chartPen4.DashStyle = System.Drawing.Drawing2D.DashStyle.Solid;
             chartPen4.Width = 1F;
-            this.perfChart.PerfChartStyle.VerticalGridPen = chartPen4;
-            this.perfChart.ScaleMode = SpPerfChart.ScaleMode.Relative;
-            this.perfChart.Size = new System.Drawing.Size(247, 116);
-            this.perfChart.TabIndex = 0;
-            this.perfChart.TimerInterval = 100;
-            this.perfChart.TimerMode = SpPerfChart.TimerMode.Disabled;
+            perfChart.PerfChartStyle.RefLinePen = chartPen4;
+            perfChart.PerfChartStyle.ShowAverageLine = true;
+            perfChart.PerfChartStyle.ShowHorizontalGridLines = true;
+            perfChart.PerfChartStyle.ShowVerticalGridLines = true;
+            chartPen5.Color = System.Drawing.Color.DarkOliveGreen;
+            chartPen5.DashStyle = System.Drawing.Drawing2D.DashStyle.Dot;
+            chartPen5.Width = 1F;
+            perfChart.PerfChartStyle.VerticalGridPen = chartPen5;
+            perfChart.ScaleMode = SpPerfChart.ScaleMode.Relative;
+            perfChart.Size = new System.Drawing.Size(288, 133);
+            perfChart.TabIndex = 0;
+            perfChart.TimerInterval = 100;
+            perfChart.TimerMode = SpPerfChart.TimerMode.Disabled;
             // 
             // grpBxRandVal
             // 
-            this.grpBxRandVal.Controls.Add(this.chkBxTimerEnabled);
-            this.grpBxRandVal.Controls.Add(this.label5);
-            this.grpBxRandVal.Controls.Add(this.numUpDnToInterval);
-            this.grpBxRandVal.Controls.Add(this.numUpDnFromInterval);
-            this.grpBxRandVal.Controls.Add(this.label3);
-            this.grpBxRandVal.Controls.Add(this.label2);
-            this.grpBxRandVal.Location = new System.Drawing.Point(12, 159);
-            this.grpBxRandVal.Name = "grpBxRandVal";
-            this.grpBxRandVal.Size = new System.Drawing.Size(259, 90);
-            this.grpBxRandVal.TabIndex = 1;
-            this.grpBxRandVal.TabStop = false;
-            this.grpBxRandVal.Text = "Value Generator Timer";
+            grpBxRandVal.Controls.Add(chkBxTimerEnabled);
+            grpBxRandVal.Controls.Add(label5);
+            grpBxRandVal.Controls.Add(numUpDnToInterval);
+            grpBxRandVal.Controls.Add(numUpDnFromInterval);
+            grpBxRandVal.Controls.Add(label3);
+            grpBxRandVal.Controls.Add(label2);
+            grpBxRandVal.Location = new System.Drawing.Point(14, 183);
+            grpBxRandVal.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            grpBxRandVal.Name = "grpBxRandVal";
+            grpBxRandVal.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            grpBxRandVal.Size = new System.Drawing.Size(302, 104);
+            grpBxRandVal.TabIndex = 1;
+            grpBxRandVal.TabStop = false;
+            grpBxRandVal.Text = "Value Generator Timer";
             // 
             // chkBxTimerEnabled
             // 
-            this.chkBxTimerEnabled.AutoSize = true;
-            this.chkBxTimerEnabled.Location = new System.Drawing.Point(16, 48);
-            this.chkBxTimerEnabled.Name = "chkBxTimerEnabled";
-            this.chkBxTimerEnabled.Size = new System.Drawing.Size(94, 17);
-            this.chkBxTimerEnabled.TabIndex = 7;
-            this.chkBxTimerEnabled.Text = "Timer Enabled";
-            this.chkBxTimerEnabled.UseVisualStyleBackColor = true;
-            this.chkBxTimerEnabled.CheckedChanged += new System.EventHandler(this.chkBxTimerEnabled_CheckedChanged);
+            chkBxTimerEnabled.AutoSize = true;
+            chkBxTimerEnabled.Location = new System.Drawing.Point(19, 55);
+            chkBxTimerEnabled.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            chkBxTimerEnabled.Name = "chkBxTimerEnabled";
+            chkBxTimerEnabled.Size = new System.Drawing.Size(101, 19);
+            chkBxTimerEnabled.TabIndex = 7;
+            chkBxTimerEnabled.Text = "Timer Enabled";
+            chkBxTimerEnabled.UseVisualStyleBackColor = true;
+            chkBxTimerEnabled.CheckedChanged += chkBxTimerEnabled_CheckedChanged;
             // 
             // label5
             // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(210, 24);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(20, 13);
-            this.label5.TabIndex = 6;
-            this.label5.Text = "ms";
+            label5.AutoSize = true;
+            label5.Location = new System.Drawing.Point(245, 28);
+            label5.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            label5.Name = "label5";
+            label5.Size = new System.Drawing.Size(23, 15);
+            label5.TabIndex = 6;
+            label5.Text = "ms";
             // 
             // numUpDnToInterval
             // 
-            this.numUpDnToInterval.Location = new System.Drawing.Point(139, 22);
-            this.numUpDnToInterval.Maximum = new decimal(new int[] {
-            9999,
-            0,
-            0,
-            0});
-            this.numUpDnToInterval.Minimum = new decimal(new int[] {
-            15,
-            0,
-            0,
-            0});
-            this.numUpDnToInterval.Name = "numUpDnToInterval";
-            this.numUpDnToInterval.Size = new System.Drawing.Size(65, 20);
-            this.numUpDnToInterval.TabIndex = 5;
-            this.numUpDnToInterval.Value = new decimal(new int[] {
-            1000,
-            0,
-            0,
-            0});
+            numUpDnToInterval.Location = new System.Drawing.Point(162, 25);
+            numUpDnToInterval.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            numUpDnToInterval.Maximum = new decimal(new int[] { 9999, 0, 0, 0 });
+            numUpDnToInterval.Minimum = new decimal(new int[] { 15, 0, 0, 0 });
+            numUpDnToInterval.Name = "numUpDnToInterval";
+            numUpDnToInterval.Size = new System.Drawing.Size(76, 23);
+            numUpDnToInterval.TabIndex = 5;
+            numUpDnToInterval.Value = new decimal(new int[] { 1000, 0, 0, 0 });
             // 
             // numUpDnFromInterval
             // 
-            this.numUpDnFromInterval.Location = new System.Drawing.Point(46, 22);
-            this.numUpDnFromInterval.Maximum = new decimal(new int[] {
-            9999,
-            0,
-            0,
-            0});
-            this.numUpDnFromInterval.Minimum = new decimal(new int[] {
-            15,
-            0,
-            0,
-            0});
-            this.numUpDnFromInterval.Name = "numUpDnFromInterval";
-            this.numUpDnFromInterval.Size = new System.Drawing.Size(65, 20);
-            this.numUpDnFromInterval.TabIndex = 3;
-            this.numUpDnFromInterval.Value = new decimal(new int[] {
-            100,
-            0,
-            0,
-            0});
+            numUpDnFromInterval.Location = new System.Drawing.Point(54, 25);
+            numUpDnFromInterval.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            numUpDnFromInterval.Maximum = new decimal(new int[] { 9999, 0, 0, 0 });
+            numUpDnFromInterval.Minimum = new decimal(new int[] { 15, 0, 0, 0 });
+            numUpDnFromInterval.Name = "numUpDnFromInterval";
+            numUpDnFromInterval.Size = new System.Drawing.Size(76, 23);
+            numUpDnFromInterval.TabIndex = 3;
+            numUpDnFromInterval.Value = new decimal(new int[] { 100, 0, 0, 0 });
             // 
             // label3
             // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(117, 24);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(16, 13);
-            this.label3.TabIndex = 2;
-            this.label3.Text = "to";
+            label3.AutoSize = true;
+            label3.Location = new System.Drawing.Point(136, 28);
+            label3.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            label3.Name = "label3";
+            label3.Size = new System.Drawing.Size(18, 15);
+            label3.TabIndex = 2;
+            label3.Text = "to";
             // 
             // label2
             // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(13, 24);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(27, 13);
-            this.label2.TabIndex = 1;
-            this.label2.Text = "from";
+            label2.AutoSize = true;
+            label2.Location = new System.Drawing.Point(15, 28);
+            label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            label2.Name = "label2";
+            label2.Size = new System.Drawing.Size(33, 15);
+            label2.TabIndex = 1;
+            label2.Text = "from";
             // 
             // grpBxValueGen
             // 
-            this.grpBxValueGen.Controls.Add(this.numUpDnValTo);
-            this.grpBxValueGen.Controls.Add(this.numUpDnValFrom);
-            this.grpBxValueGen.Controls.Add(this.label4);
-            this.grpBxValueGen.Controls.Add(this.label6);
-            this.grpBxValueGen.Location = new System.Drawing.Point(12, 255);
-            this.grpBxValueGen.Name = "grpBxValueGen";
-            this.grpBxValueGen.Size = new System.Drawing.Size(259, 68);
-            this.grpBxValueGen.TabIndex = 2;
-            this.grpBxValueGen.TabStop = false;
-            this.grpBxValueGen.Text = "Generated Values";
+            grpBxValueGen.Controls.Add(numUpDnValTo);
+            grpBxValueGen.Controls.Add(numUpDnValFrom);
+            grpBxValueGen.Controls.Add(label4);
+            grpBxValueGen.Controls.Add(label6);
+            grpBxValueGen.Location = new System.Drawing.Point(14, 294);
+            grpBxValueGen.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            grpBxValueGen.Name = "grpBxValueGen";
+            grpBxValueGen.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            grpBxValueGen.Size = new System.Drawing.Size(302, 78);
+            grpBxValueGen.TabIndex = 2;
+            grpBxValueGen.TabStop = false;
+            grpBxValueGen.Text = "Generated Values";
             // 
             // numUpDnValTo
             // 
-            this.numUpDnValTo.Location = new System.Drawing.Point(139, 22);
-            this.numUpDnValTo.Maximum = new decimal(new int[] {
-            9999,
-            0,
-            0,
-            0});
-            this.numUpDnValTo.Name = "numUpDnValTo";
-            this.numUpDnValTo.Size = new System.Drawing.Size(65, 20);
-            this.numUpDnValTo.TabIndex = 10;
-            this.numUpDnValTo.Value = new decimal(new int[] {
-            100,
-            0,
-            0,
-            0});
+            numUpDnValTo.Location = new System.Drawing.Point(162, 25);
+            numUpDnValTo.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            numUpDnValTo.Maximum = new decimal(new int[] { 9999, 0, 0, 0 });
+            numUpDnValTo.Name = "numUpDnValTo";
+            numUpDnValTo.Size = new System.Drawing.Size(76, 23);
+            numUpDnValTo.TabIndex = 10;
+            numUpDnValTo.Value = new decimal(new int[] { 100, 0, 0, 0 });
             // 
             // numUpDnValFrom
             // 
-            this.numUpDnValFrom.Location = new System.Drawing.Point(46, 22);
-            this.numUpDnValFrom.Maximum = new decimal(new int[] {
-            9999,
-            0,
-            0,
-            0});
-            this.numUpDnValFrom.Name = "numUpDnValFrom";
-            this.numUpDnValFrom.Size = new System.Drawing.Size(65, 20);
-            this.numUpDnValFrom.TabIndex = 9;
+            numUpDnValFrom.Location = new System.Drawing.Point(54, 25);
+            numUpDnValFrom.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            numUpDnValFrom.Maximum = new decimal(new int[] { 9999, 0, 0, 0 });
+            numUpDnValFrom.Minimum = new decimal(new int[] { 100, 0, 0, int.MinValue });
+            numUpDnValFrom.Name = "numUpDnValFrom";
+            numUpDnValFrom.Size = new System.Drawing.Size(76, 23);
+            numUpDnValFrom.TabIndex = 9;
+            numUpDnValFrom.Value = new decimal(new int[] { 100, 0, 0, int.MinValue });
             // 
             // label4
             // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(117, 24);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(16, 13);
-            this.label4.TabIndex = 8;
-            this.label4.Text = "to";
+            label4.AutoSize = true;
+            label4.Location = new System.Drawing.Point(136, 28);
+            label4.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            label4.Name = "label4";
+            label4.Size = new System.Drawing.Size(18, 15);
+            label4.TabIndex = 8;
+            label4.Text = "to";
             // 
             // label6
             // 
-            this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(13, 24);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(27, 13);
-            this.label6.TabIndex = 7;
-            this.label6.Text = "from";
+            label6.AutoSize = true;
+            label6.Location = new System.Drawing.Point(15, 28);
+            label6.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            label6.Name = "label6";
+            label6.Size = new System.Drawing.Size(33, 15);
+            label6.TabIndex = 7;
+            label6.Text = "from";
             // 
             // groupBox1
             // 
-            this.groupBox1.Controls.Add(this.label11);
-            this.groupBox1.Controls.Add(this.numUpDnTimerInterval);
-            this.groupBox1.Controls.Add(this.label10);
-            this.groupBox1.Controls.Add(this.label9);
-            this.groupBox1.Controls.Add(this.cmbBxTimerMode);
-            this.groupBox1.Controls.Add(this.label8);
-            this.groupBox1.Controls.Add(this.cmbBxScaleMode);
-            this.groupBox1.Controls.Add(this.label7);
-            this.groupBox1.Controls.Add(this.cmbBxBorder);
-            this.groupBox1.Location = new System.Drawing.Point(277, 12);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(259, 141);
-            this.groupBox1.TabIndex = 3;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Engine Properties";
+            groupBox1.Controls.Add(label11);
+            groupBox1.Controls.Add(numUpDnTimerInterval);
+            groupBox1.Controls.Add(label10);
+            groupBox1.Controls.Add(label9);
+            groupBox1.Controls.Add(cmbBxTimerMode);
+            groupBox1.Controls.Add(label8);
+            groupBox1.Controls.Add(cmbBxScaleMode);
+            groupBox1.Controls.Add(label7);
+            groupBox1.Controls.Add(cmbBxBorder);
+            groupBox1.Location = new System.Drawing.Point(323, 14);
+            groupBox1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            groupBox1.Name = "groupBox1";
+            groupBox1.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            groupBox1.Size = new System.Drawing.Size(302, 163);
+            groupBox1.TabIndex = 3;
+            groupBox1.TabStop = false;
+            groupBox1.Text = "Engine Properties";
             // 
             // label11
             // 
-            this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(162, 101);
-            this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(20, 13);
-            this.label11.TabIndex = 8;
-            this.label11.Text = "ms";
+            label11.AutoSize = true;
+            label11.Location = new System.Drawing.Point(189, 117);
+            label11.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            label11.Name = "label11";
+            label11.Size = new System.Drawing.Size(23, 15);
+            label11.TabIndex = 8;
+            label11.Text = "ms";
             // 
             // numUpDnTimerInterval
             // 
-            this.numUpDnTimerInterval.Location = new System.Drawing.Point(91, 99);
-            this.numUpDnTimerInterval.Maximum = new decimal(new int[] {
-            5000,
-            0,
-            0,
-            0});
-            this.numUpDnTimerInterval.Minimum = new decimal(new int[] {
-            50,
-            0,
-            0,
-            0});
-            this.numUpDnTimerInterval.Name = "numUpDnTimerInterval";
-            this.numUpDnTimerInterval.Size = new System.Drawing.Size(65, 20);
-            this.numUpDnTimerInterval.TabIndex = 7;
-            this.numUpDnTimerInterval.Value = new decimal(new int[] {
-            1000,
-            0,
-            0,
-            0});
-            this.numUpDnTimerInterval.ValueChanged += new System.EventHandler(this.numUpDnTimerInterval_ValueChanged);
+            numUpDnTimerInterval.Location = new System.Drawing.Point(106, 114);
+            numUpDnTimerInterval.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            numUpDnTimerInterval.Maximum = new decimal(new int[] { 5000, 0, 0, 0 });
+            numUpDnTimerInterval.Minimum = new decimal(new int[] { 50, 0, 0, 0 });
+            numUpDnTimerInterval.Name = "numUpDnTimerInterval";
+            numUpDnTimerInterval.Size = new System.Drawing.Size(76, 23);
+            numUpDnTimerInterval.TabIndex = 7;
+            numUpDnTimerInterval.Value = new decimal(new int[] { 1000, 0, 0, 0 });
+            numUpDnTimerInterval.ValueChanged += numUpDnTimerInterval_ValueChanged;
             // 
             // label10
             // 
-            this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(7, 101);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(68, 13);
-            this.label10.TabIndex = 6;
-            this.label10.Text = "TimerInterval";
+            label10.AutoSize = true;
+            label10.Location = new System.Drawing.Point(8, 117);
+            label10.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            label10.Name = "label10";
+            label10.Size = new System.Drawing.Size(76, 15);
+            label10.TabIndex = 6;
+            label10.Text = "TimerInterval";
             // 
             // label9
             // 
-            this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(6, 75);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(60, 13);
-            this.label9.TabIndex = 5;
-            this.label9.Text = "TimerMode";
+            label9.AutoSize = true;
+            label9.Location = new System.Drawing.Point(7, 87);
+            label9.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            label9.Name = "label9";
+            label9.Size = new System.Drawing.Size(68, 15);
+            label9.TabIndex = 5;
+            label9.Text = "TimerMode";
             // 
             // cmbBxTimerMode
             // 
-            this.cmbBxTimerMode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbBxTimerMode.FormattingEnabled = true;
-            this.cmbBxTimerMode.Location = new System.Drawing.Point(91, 72);
-            this.cmbBxTimerMode.Name = "cmbBxTimerMode";
-            this.cmbBxTimerMode.Size = new System.Drawing.Size(162, 21);
-            this.cmbBxTimerMode.TabIndex = 4;
-            this.cmbBxTimerMode.SelectedIndexChanged += new System.EventHandler(this.cmbBxTimerMode_SelectedIndexChanged);
+            cmbBxTimerMode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            cmbBxTimerMode.FormattingEnabled = true;
+            cmbBxTimerMode.Location = new System.Drawing.Point(106, 83);
+            cmbBxTimerMode.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            cmbBxTimerMode.Name = "cmbBxTimerMode";
+            cmbBxTimerMode.Size = new System.Drawing.Size(188, 23);
+            cmbBxTimerMode.TabIndex = 4;
+            cmbBxTimerMode.SelectedIndexChanged += cmbBxTimerMode_SelectedIndexChanged;
             // 
             // label8
             // 
-            this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(6, 48);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(61, 13);
-            this.label8.TabIndex = 3;
-            this.label8.Text = "ScaleMode";
+            label8.AutoSize = true;
+            label8.Location = new System.Drawing.Point(7, 55);
+            label8.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            label8.Name = "label8";
+            label8.Size = new System.Drawing.Size(65, 15);
+            label8.TabIndex = 3;
+            label8.Text = "ScaleMode";
             // 
             // cmbBxScaleMode
             // 
-            this.cmbBxScaleMode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbBxScaleMode.FormattingEnabled = true;
-            this.cmbBxScaleMode.Location = new System.Drawing.Point(91, 45);
-            this.cmbBxScaleMode.Name = "cmbBxScaleMode";
-            this.cmbBxScaleMode.Size = new System.Drawing.Size(162, 21);
-            this.cmbBxScaleMode.TabIndex = 2;
-            this.cmbBxScaleMode.SelectedIndexChanged += new System.EventHandler(this.cmbBxScaleMode_SelectedIndexChanged);
+            cmbBxScaleMode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            cmbBxScaleMode.FormattingEnabled = true;
+            cmbBxScaleMode.Location = new System.Drawing.Point(106, 52);
+            cmbBxScaleMode.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            cmbBxScaleMode.Name = "cmbBxScaleMode";
+            cmbBxScaleMode.Size = new System.Drawing.Size(188, 23);
+            cmbBxScaleMode.TabIndex = 2;
+            cmbBxScaleMode.SelectedIndexChanged += cmbBxScaleMode_SelectedIndexChanged;
             // 
             // label7
             // 
-            this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(6, 21);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(61, 13);
-            this.label7.TabIndex = 1;
-            this.label7.Text = "BorderStyle";
+            label7.AutoSize = true;
+            label7.Location = new System.Drawing.Point(7, 24);
+            label7.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            label7.Name = "label7";
+            label7.Size = new System.Drawing.Size(67, 15);
+            label7.TabIndex = 1;
+            label7.Text = "BorderStyle";
             // 
             // cmbBxBorder
             // 
-            this.cmbBxBorder.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbBxBorder.FormattingEnabled = true;
-            this.cmbBxBorder.Location = new System.Drawing.Point(91, 18);
-            this.cmbBxBorder.Name = "cmbBxBorder";
-            this.cmbBxBorder.Size = new System.Drawing.Size(162, 21);
-            this.cmbBxBorder.TabIndex = 0;
-            this.cmbBxBorder.SelectedIndexChanged += new System.EventHandler(this.cmbBxBorder_SelectedIndexChanged);
+            cmbBxBorder.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            cmbBxBorder.FormattingEnabled = true;
+            cmbBxBorder.Location = new System.Drawing.Point(106, 21);
+            cmbBxBorder.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            cmbBxBorder.Name = "cmbBxBorder";
+            cmbBxBorder.Size = new System.Drawing.Size(188, 23);
+            cmbBxBorder.TabIndex = 0;
+            cmbBxBorder.SelectedIndexChanged += cmbBxBorder_SelectedIndexChanged;
             // 
             // groupBox2
             // 
-            this.groupBox2.Controls.Add(this.propGrid);
-            this.groupBox2.Location = new System.Drawing.Point(277, 159);
-            this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Padding = new System.Windows.Forms.Padding(6);
-            this.groupBox2.Size = new System.Drawing.Size(259, 164);
-            this.groupBox2.TabIndex = 4;
-            this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "Style Properties";
+            groupBox2.Controls.Add(propGrid);
+            groupBox2.Location = new System.Drawing.Point(323, 183);
+            groupBox2.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            groupBox2.Name = "groupBox2";
+            groupBox2.Padding = new System.Windows.Forms.Padding(7, 7, 7, 7);
+            groupBox2.Size = new System.Drawing.Size(302, 189);
+            groupBox2.TabIndex = 4;
+            groupBox2.TabStop = false;
+            groupBox2.Text = "Style Properties";
             // 
             // propGrid
             // 
-            this.propGrid.CommandsVisibleIfAvailable = false;
-            this.propGrid.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.propGrid.HelpVisible = false;
-            this.propGrid.Location = new System.Drawing.Point(6, 19);
-            this.propGrid.Name = "propGrid";
-            this.propGrid.PropertySort = System.Windows.Forms.PropertySort.Alphabetical;
-            this.propGrid.SelectedObject = this.perfChart;
-            this.propGrid.Size = new System.Drawing.Size(247, 139);
-            this.propGrid.TabIndex = 0;
-            this.propGrid.ToolbarVisible = false;
+            propGrid.CommandsVisibleIfAvailable = false;
+            propGrid.Dock = System.Windows.Forms.DockStyle.Fill;
+            propGrid.HelpVisible = false;
+            propGrid.Location = new System.Drawing.Point(7, 23);
+            propGrid.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            propGrid.Name = "propGrid";
+            propGrid.PropertySort = System.Windows.Forms.PropertySort.Alphabetical;
+            propGrid.SelectedObject = perfChart;
+            propGrid.Size = new System.Drawing.Size(288, 159);
+            propGrid.TabIndex = 0;
+            propGrid.ToolbarVisible = false;
             // 
             // bgWrkTimer
             // 
-            this.bgWrkTimer.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bgWrkTimer_DoWork);
-            this.bgWrkTimer.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.bgWrkTimer_RunWorkerCompleted);
+            bgWrkTimer.DoWork += bgWrkTimer_DoWork;
+            bgWrkTimer.RunWorkerCompleted += bgWrkTimer_RunWorkerCompleted;
             // 
             // btnApply
             // 
-            this.btnApply.Location = new System.Drawing.Point(461, 329);
-            this.btnApply.Name = "btnApply";
-            this.btnApply.Size = new System.Drawing.Size(75, 23);
-            this.btnApply.TabIndex = 5;
-            this.btnApply.Text = "&Apply";
-            this.btnApply.UseVisualStyleBackColor = true;
-            this.btnApply.Click += new System.EventHandler(this.btnApply_Click);
+            btnApply.Location = new System.Drawing.Point(538, 380);
+            btnApply.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            btnApply.Name = "btnApply";
+            btnApply.Size = new System.Drawing.Size(88, 27);
+            btnApply.TabIndex = 5;
+            btnApply.Text = "&Apply";
+            btnApply.UseVisualStyleBackColor = true;
+            btnApply.Click += btnApply_Click;
             // 
             // btnClear
             // 
-            this.btnClear.Location = new System.Drawing.Point(384, 329);
-            this.btnClear.Name = "btnClear";
-            this.btnClear.Size = new System.Drawing.Size(75, 23);
-            this.btnClear.TabIndex = 6;
-            this.btnClear.Text = "&Clear";
-            this.btnClear.UseVisualStyleBackColor = true;
-            this.btnClear.Click += new System.EventHandler(this.btnClear_Click);
+            btnClear.Location = new System.Drawing.Point(448, 380);
+            btnClear.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            btnClear.Name = "btnClear";
+            btnClear.Size = new System.Drawing.Size(88, 27);
+            btnClear.TabIndex = 6;
+            btnClear.Text = "&Clear";
+            btnClear.UseVisualStyleBackColor = true;
+            btnClear.Click += btnClear_Click;
             // 
             // FrmTestingForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(554, 383);
-            this.Controls.Add(this.btnClear);
-            this.Controls.Add(this.btnApply);
-            this.Controls.Add(this.groupBox2);
-            this.Controls.Add(this.groupBox1);
-            this.Controls.Add(this.grpBxValueGen);
-            this.Controls.Add(this.grpBxRandVal);
-            this.Controls.Add(this.grpBxChart);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
-            this.MaximizeBox = false;
-            this.Name = "FrmTestingForm";
-            this.Text = "PerfChart Testing Application";
-            this.grpBxChart.ResumeLayout(false);
-            this.grpBxRandVal.ResumeLayout(false);
-            this.grpBxRandVal.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numUpDnToInterval)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numUpDnFromInterval)).EndInit();
-            this.grpBxValueGen.ResumeLayout(false);
-            this.grpBxValueGen.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numUpDnValTo)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numUpDnValFrom)).EndInit();
-            this.groupBox1.ResumeLayout(false);
-            this.groupBox1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numUpDnTimerInterval)).EndInit();
-            this.groupBox2.ResumeLayout(false);
-            this.ResumeLayout(false);
+            AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
+            AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            ClientSize = new System.Drawing.Size(646, 442);
+            Controls.Add(btnClear);
+            Controls.Add(btnApply);
+            Controls.Add(groupBox2);
+            Controls.Add(groupBox1);
+            Controls.Add(grpBxValueGen);
+            Controls.Add(grpBxRandVal);
+            Controls.Add(grpBxChart);
+            FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            MaximizeBox = false;
+            Name = "FrmTestingForm";
+            Text = "PerfChart Testing Application";
+            grpBxChart.ResumeLayout(false);
+            grpBxRandVal.ResumeLayout(false);
+            grpBxRandVal.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)numUpDnToInterval).EndInit();
+            ((System.ComponentModel.ISupportInitialize)numUpDnFromInterval).EndInit();
+            grpBxValueGen.ResumeLayout(false);
+            grpBxValueGen.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)numUpDnValTo).EndInit();
+            ((System.ComponentModel.ISupportInitialize)numUpDnValFrom).EndInit();
+            groupBox1.ResumeLayout(false);
+            groupBox1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)numUpDnTimerInterval).EndInit();
+            groupBox2.ResumeLayout(false);
+            ResumeLayout(false);
 
         }
 

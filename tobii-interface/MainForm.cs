@@ -6,11 +6,38 @@ using Tobii.Research;
 
 namespace tobii_interface
 {
+    [System.Runtime.Versioning.SupportedOSPlatform("windows")]
     public partial class MainForm : Form
     {
         private Settings _settings;
         private string _logPath = "";
         private IEyeTracker? _eyeTracker = null;
+
+        private readonly float _minDistance = 35;
+        private readonly float _maxDistance = 65;
+
+        private Color _inRangeColor = Color.FromArgb(128, 255, 128);
+        private Color _outOfRangeColor = Color.FromArgb(255, 128, 128);
+
+        private bool _isRecording = false;
+        private int _framesAcquired = 0;
+
+        internal class CombinedEyeData
+        {
+            public List<EyeData> eyeDataList = new List<EyeData>();   
+            public long deviceTimeStamp;
+            public long systemTimeStamp;
+            public CombinedEyeData(long deviceTimeStamp, long systemTimeStamp, EyeData left, EyeData right)
+            {
+                this.deviceTimeStamp = deviceTimeStamp;
+                this.systemTimeStamp = systemTimeStamp;
+                eyeDataList.Add(left);
+                eyeDataList.Add(right);
+            }
+        }
+
+        private Queue<CombinedEyeData> _dataQueue = new Queue<CombinedEyeData>();
+        private CancellationTokenSource _queueCancellationToken = new CancellationTokenSource();
 
         public MainForm()
         {
@@ -24,6 +51,14 @@ namespace tobii_interface
                 Width = _settings.LastPosition.Width;
                 Height = _settings.LastPosition.Height;
             }
+
+            distanceLabel.Text = "";
+            fileLabel.Text = "";
+            framesLabel.Text = "";
+            framesLabel.Visible = false;
+
+            runButton.Enabled = false;
+            recordButton.Enabled = false;
         }
 
         private async Task StartLogging()
@@ -49,11 +84,7 @@ namespace tobii_interface
             Trace.Listeners.Add(listener);
         }
 
-        private void MainForm_Load(object sender, EventArgs e)
-        {
-
-
-        }
+        private void MainForm_Load(object sender, EventArgs e) { }
 
         private async void MainForm_Shown(object sender, EventArgs e)
         {
@@ -84,10 +115,11 @@ namespace tobii_interface
             if (list.Count > 0)
             {
                 _eyeTracker = EyeTrackingOperations.GetEyeTracker(list[0].Address);
-                //_eyeTracker.GazeDataReceived += GazeDataReceived;
 
                 trackerStatusLabel.Image = imageList.Images[1];
                 trackerStatusLabel.Text = _eyeTracker.DeviceName;
+
+                runButton.Enabled = true;
 
                 connectionTimer.Stop();
             }
@@ -95,9 +127,58 @@ namespace tobii_interface
 
         private void GazeDataReceived(object? sender, GazeDataEventArgs args)
         {
-            pupilChart.AddValue((decimal)args.LeftEye.GazePoint.PositionOnDisplayArea.Y);
-            //var pt = args.LeftEye.GazePoint;
-            //Invoke(new Action(() => textBox1.Text = $"{pt.PositionOnDisplayArea.X}, {pt.PositionOnDisplayArea.X}"));
+            double left = args.LeftEye.Pupil.Validity == Validity.Valid ? args.LeftEye.Pupil.PupilDiameter : double.NaN;
+            double right = args.RightEye.Pupil.Validity == Validity.Valid ? args.RightEye.Pupil.PupilDiameter : double.NaN;
+
+            pupilChart.AddValue(left, right);
+
+            if (_isRecording)
+            {
+                var data = new CombinedEyeData(args.DeviceTimeStamp, args.SystemTimeStamp, args.LeftEye, args.RightEye);
+                _dataQueue.Enqueue(data);
+            }
+        }
+
+        private void UserPositionGuideReceived(object? sender, UserPositionGuideEventArgs args)
+        {
+            float left = args.LeftEye.Validity == Validity.Valid ? args.LeftEye.UserPosition.Z : float.NaN;
+            float right = args.RightEye.Validity == Validity.Valid ? args.RightEye.UserPosition.Z : float.NaN;
+
+            try
+            {
+                Invoke(new Action(() => UpdateUserPositionDisplay(left, right)));
+            }
+            catch { }
+        }
+
+        private void UpdateUserPositionDisplay(float left, float right)
+        {
+            float distance = float.NaN;
+            if (!float.IsNaN(left) && !float.IsNaN(right))
+            {
+                distance = (left + right) / 2.0f;
+            }
+            else if (!float.IsNaN(left))
+            {
+                distance = left;
+            }
+            else if (!float.IsNaN(right))
+            {
+                distance = right;
+            }
+            distance *= 100;
+
+            if (!float.IsNaN(distance))
+            {
+                distanceLabel.Text = $"{distance:F0} cm";
+
+                Color color = _outOfRangeColor;
+                if (distance >= _minDistance && distance <= _maxDistance)
+                {
+                    color = _inRangeColor;
+                }
+                distanceLabel.BackColor = color;
+            }
         }
 
         private void Calibrate()
@@ -160,19 +241,129 @@ namespace tobii_interface
             }
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void calibrateButton_Click(object sender, EventArgs e)
         {
             Calibrate();
         }
 
         private void runButton_Click(object sender, EventArgs e)
         {
+            if (_eyeTracker == null) return;
+
             _eyeTracker.GazeDataReceived += GazeDataReceived;
+            _eyeTracker.UserPositionGuideReceived += UserPositionGuideReceived;
+
+            recordButton.Enabled = true;
+            runButton.Visible = false;
         }
 
         private void stopButton_Click(object sender, EventArgs e)
         {
+            if (_eyeTracker == null) return;
+
             _eyeTracker.GazeDataReceived -= GazeDataReceived;
+            _eyeTracker.UserPositionGuideReceived -= UserPositionGuideReceived;
+
+            runButton.Visible = true;
+            recordButton.Enabled = false;
         }
+
+        private void recordButton_CheckedChanged(object sender, EventArgs e)
+        {
+            if (recordButton.Checked)
+            {
+                if (_eyeTracker == null)
+                {
+                    recordButton.Checked = false;
+                    return;
+                }   
+
+                recordButton.BackColor = Color.FromArgb(228, 127, 127);
+
+                string folder = Path.Combine(
+                    Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
+                    "TobiiRecordings");
+
+                Directory.CreateDirectory(folder);
+
+                string filePath = Path.Combine(
+                    folder,
+                    $"TobiiRecording-{DateTime.Now:yyyyMMdd-HHmmss}.tsr");
+
+                StartRecording(filePath);
+
+            }
+            else
+            {
+                recordButton.BackColor = SystemColors.Control;
+                StopRecording();
+            }
+        }
+
+        private void StartRecording(string filePath)
+        {
+            fileLabel.Text = filePath;
+
+            _dataQueue.Clear();
+            _framesAcquired = 0;
+            framesLabel.Text = "0 frames";
+            framesLabel.Visible = true;
+
+            _queueCancellationToken = new CancellationTokenSource();
+            Task.Run(() =>
+            {
+                ProcessDataQueue(filePath, _queueCancellationToken.Token);
+            }, _queueCancellationToken.Token);
+
+            _isRecording = true;
+        }
+
+        private void StopRecording()
+        {
+            _isRecording = false;
+            _queueCancellationToken.Cancel();
+            framesLabel.Visible = false;
+            fileLabel.Text = "";
+            Debug.WriteLine($"{_framesAcquired} frames acquired");
+        }
+
+        private void ProcessDataQueue(string filePath, CancellationToken ct)
+        {
+            using (Stream fileStream = new FileStream(filePath, FileMode.Create, FileAccess.Write, FileShare.None))
+            using (BinaryWriter writer = new BinaryWriter(fileStream))
+            {
+                while (true)
+                {
+                    if (_dataQueue.Count == 0)
+                    {
+                        if (ct.IsCancellationRequested) break;
+                        Thread.Sleep(50);
+                    }
+                    else
+                    {
+                        _framesAcquired++;
+                        Invoke(new Action(() => framesLabel.Text = $"{_framesAcquired} frames"));
+
+                        var data = _dataQueue.Dequeue();
+                        writer.Write(data.deviceTimeStamp);
+                        writer.Write(data.systemTimeStamp);
+
+                        foreach (var eye in data.eyeDataList)
+                        {
+                            bool gazeValidity = eye.GazePoint.Validity == Validity.Valid;
+                            float gazeX = eye.GazePoint.PositionOnDisplayArea.X;
+                            float gazeY = eye.GazePoint.PositionOnDisplayArea.Y;
+                            float pupilDiameter = eye.Pupil.Validity == Validity.Valid ? (float)eye.Pupil.PupilDiameter : float.NaN;
+                            
+                            writer.Write(gazeValidity);
+                            writer.Write(gazeX);
+                            writer.Write(gazeY);
+                            writer.Write(pupilDiameter);
+                        }
+                    }
+                }
+            }
+        }
+
     }
 }
