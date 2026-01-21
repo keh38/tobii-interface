@@ -181,6 +181,11 @@ namespace SpPerfChart
             set { _minValue = value; }
         }
 
+        public double CurrentRange
+        {
+            get { return _currentMaxValue - _currentMinValue; }
+        }
+
         public string Format
         {
             get { return _maxFormat; }
@@ -193,6 +198,11 @@ namespace SpPerfChart
             {
                 _gridSpacing = value * fineValueSpacing * 0.5f;
             }
+        }
+
+        public float NumberOfFrames
+        {
+            get { return Width * fineValueSpacing; }
         }
 
         public TimerMode TimerMode {
@@ -474,7 +484,14 @@ namespace SpPerfChart
                     // Actually draw the line
                     if (currentPoint.Y > 0)
                     {
-                        g.DrawLine(pen, previousPoint, currentPoint);
+                        if (previousPoint.Y > 0)
+                        {
+                            g.DrawLine(pen, previousPoint, currentPoint);
+                        }
+                        else
+                        {
+                            g.DrawLine(pen, new Point(currentPoint.X+1, currentPoint.Y) , currentPoint);
+                        }
                     }
 
                     //if (drawValues[i] < 0)

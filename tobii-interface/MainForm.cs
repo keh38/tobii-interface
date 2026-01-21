@@ -1,3 +1,4 @@
+using KLib.KGraphics;
 using Serilog;
 using System.Diagnostics;
 using System.Reflection;
@@ -21,6 +22,8 @@ namespace tobii_interface
 
         private bool _isRecording = false;
         private int _framesAcquired = 0;
+
+        private Network _network;
 
         internal class CombinedEyeData
         {
@@ -52,8 +55,11 @@ namespace tobii_interface
                 Height = _settings.LastPosition.Height;
             }
 
+            _network = new Network();
+
             distanceLabel.Text = "";
             fileLabel.Text = "";
+            scaleLabel.Text = "";
             framesLabel.Text = "";
             framesLabel.Visible = false;
 
@@ -95,11 +101,16 @@ namespace tobii_interface
             trackerStatusLabel.Image = imageList.Images[0];
             trackerStatusLabel.Text = "No tracker found";
 
+            Log.Information("Starting discovery server");
+            _network.StartDiscoveryServer();
+
             connectionTimer.Start();
         }
 
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
+            _network.Disconnect();
+
             _settings.LastPosition = new Rectangle(Location.X, Location.Y, Width, Height);
             _settings.Save();
 
@@ -131,6 +142,7 @@ namespace tobii_interface
             double right = args.RightEye.Pupil.Validity == Validity.Valid ? args.RightEye.Pupil.PupilDiameter : double.NaN;
 
             pupilChart.AddValue(left, right);
+            UpdateScaleLabel();
 
             if (_isRecording)
             {
@@ -179,6 +191,18 @@ namespace tobii_interface
                 }
                 distanceLabel.BackColor = color;
             }
+        }
+
+        private void UpdateScaleLabel()
+        {
+            if (_eyeTracker != null) return;
+            
+            float fps = _eyeTracker.GetGazeOutputFrequency();
+            float plotWidth = pupilChart.NumberOfFrames / fps;
+            double plotHeight = pupilChart.CurrentRange;
+
+            scaleLabel.Text = $"{plotHeight:F1}mm x {plotWidth:F2}s";
+
         }
 
         private void Calibrate()
@@ -302,7 +326,7 @@ namespace tobii_interface
 
         private void StartRecording(string filePath)
         {
-            fileLabel.Text = filePath;
+            fileLabel.Text = Tools.CompactPath(filePath, fileLabel.Width, fileLabel.Font, TextFormatFlags.PathEllipsis);
 
             _dataQueue.Clear();
             _framesAcquired = 0;

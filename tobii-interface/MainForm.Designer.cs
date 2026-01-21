@@ -43,6 +43,7 @@
             statusStrip = new StatusStrip();
             trackerStatusLabel = new ToolStripStatusLabel();
             distanceLabel = new ToolStripStatusLabel();
+            framesLabel = new ToolStripStatusLabel();
             fileLabel = new ToolStripStatusLabel();
             imageList = new ImageList(components);
             connectionTimer = new System.Windows.Forms.Timer(components);
@@ -52,7 +53,7 @@
             pupilChart = new SpPerfChart.PerfChart();
             splitContainer1 = new SplitContainer();
             recordButton = new CheckBox();
-            framesLabel = new ToolStripStatusLabel();
+            scaleLabel = new ToolStripStatusLabel();
             statusStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
             splitContainer1.Panel1.SuspendLayout();
@@ -62,10 +63,12 @@
             // 
             // statusStrip
             // 
-            statusStrip.Items.AddRange(new ToolStripItem[] { trackerStatusLabel, distanceLabel, framesLabel, fileLabel });
-            statusStrip.Location = new Point(0, 197);
+            statusStrip.ImageScalingSize = new Size(20, 20);
+            statusStrip.Items.AddRange(new ToolStripItem[] { trackerStatusLabel, distanceLabel, scaleLabel, framesLabel, fileLabel });
+            statusStrip.Location = new Point(0, 265);
             statusStrip.Name = "statusStrip";
-            statusStrip.Size = new Size(692, 24);
+            statusStrip.Padding = new Padding(1, 0, 16, 0);
+            statusStrip.Size = new Size(791, 30);
             statusStrip.TabIndex = 0;
             statusStrip.Text = "statusStrip1";
             // 
@@ -73,7 +76,7 @@
             // 
             trackerStatusLabel.BorderSides = ToolStripStatusLabelBorderSides.Right;
             trackerStatusLabel.Name = "trackerStatusLabel";
-            trackerStatusLabel.Size = new Size(101, 19);
+            trackerStatusLabel.Size = new Size(125, 24);
             trackerStatusLabel.Text = "No tracker found";
             // 
             // distanceLabel
@@ -81,14 +84,23 @@
             distanceLabel.AutoSize = false;
             distanceLabel.BorderSides = ToolStripStatusLabelBorderSides.Right;
             distanceLabel.Name = "distanceLabel";
-            distanceLabel.Size = new Size(75, 19);
+            distanceLabel.Size = new Size(75, 24);
             distanceLabel.Text = "35 cm";
+            // 
+            // framesLabel
+            // 
+            framesLabel.AutoSize = false;
+            framesLabel.BorderSides = ToolStripStatusLabelBorderSides.Right;
+            framesLabel.Name = "framesLabel";
+            framesLabel.Size = new Size(80, 24);
+            framesLabel.Text = "00000 frames";
+            framesLabel.TextAlign = ContentAlignment.MiddleRight;
             // 
             // fileLabel
             // 
             fileLabel.ForeColor = Color.FromArgb(228, 0, 0);
             fileLabel.Name = "fileLabel";
-            fileLabel.Size = new Size(34, 19);
+            fileLabel.Size = new Size(41, 24);
             fileLabel.Text = "File...";
             // 
             // imageList
@@ -105,9 +117,10 @@
             // 
             // calibrateButton
             // 
-            calibrateButton.Location = new Point(21, 17);
+            calibrateButton.Location = new Point(24, 23);
+            calibrateButton.Margin = new Padding(3, 4, 3, 4);
             calibrateButton.Name = "calibrateButton";
-            calibrateButton.Size = new Size(93, 42);
+            calibrateButton.Size = new Size(106, 56);
             calibrateButton.TabIndex = 1;
             calibrateButton.Text = "Calibrate";
             calibrateButton.UseVisualStyleBackColor = true;
@@ -115,9 +128,10 @@
             // 
             // runButton
             // 
-            runButton.Location = new Point(21, 69);
+            runButton.Location = new Point(24, 92);
+            runButton.Margin = new Padding(3, 4, 3, 4);
             runButton.Name = "runButton";
-            runButton.Size = new Size(93, 42);
+            runButton.Size = new Size(106, 56);
             runButton.TabIndex = 2;
             runButton.Text = "Run";
             runButton.UseVisualStyleBackColor = true;
@@ -125,9 +139,10 @@
             // 
             // stopButton
             // 
-            stopButton.Location = new Point(21, 69);
+            stopButton.Location = new Point(24, 92);
+            stopButton.Margin = new Padding(3, 4, 3, 4);
             stopButton.Name = "stopButton";
-            stopButton.Size = new Size(93, 42);
+            stopButton.Size = new Size(106, 56);
             stopButton.TabIndex = 3;
             stopButton.Text = "Stop";
             stopButton.UseVisualStyleBackColor = true;
@@ -139,7 +154,7 @@
             pupilChart.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.World);
             pupilChart.Format = "F1";
             pupilChart.Location = new Point(0, 0);
-            pupilChart.Margin = new Padding(4, 3, 4, 3);
+            pupilChart.Margin = new Padding(5, 4, 5, 4);
             pupilChart.Max = 100D;
             pupilChart.MaxValueCount = 10000;
             pupilChart.Min = -100D;
@@ -172,7 +187,7 @@
             chartPen5.Width = 1F;
             pupilChart.PerfChartStyle.VerticalGridPen = chartPen5;
             pupilChart.ScaleMode = SpPerfChart.ScaleMode.Relative;
-            pupilChart.Size = new Size(555, 197);
+            pupilChart.Size = new Size(634, 265);
             pupilChart.TabIndex = 4;
             pupilChart.TimerInterval = 100;
             pupilChart.TimerMode = SpPerfChart.TimerMode.Simple;
@@ -183,6 +198,7 @@
             splitContainer1.FixedPanel = FixedPanel.Panel1;
             splitContainer1.IsSplitterFixed = true;
             splitContainer1.Location = new Point(0, 0);
+            splitContainer1.Margin = new Padding(3, 4, 3, 4);
             splitContainer1.Name = "splitContainer1";
             // 
             // splitContainer1.Panel1
@@ -195,39 +211,41 @@
             // splitContainer1.Panel2
             // 
             splitContainer1.Panel2.Controls.Add(pupilChart);
-            splitContainer1.Size = new Size(692, 197);
-            splitContainer1.SplitterDistance = 133;
+            splitContainer1.Size = new Size(791, 265);
+            splitContainer1.SplitterDistance = 152;
+            splitContainer1.SplitterWidth = 5;
             splitContainer1.TabIndex = 6;
             // 
             // recordButton
             // 
             recordButton.Appearance = Appearance.Button;
-            recordButton.Location = new Point(21, 135);
+            recordButton.Location = new Point(24, 180);
+            recordButton.Margin = new Padding(3, 4, 3, 4);
             recordButton.Name = "recordButton";
-            recordButton.Size = new Size(93, 40);
+            recordButton.Size = new Size(106, 53);
             recordButton.TabIndex = 5;
             recordButton.Text = "Record";
             recordButton.TextAlign = ContentAlignment.MiddleCenter;
             recordButton.UseVisualStyleBackColor = true;
             recordButton.CheckedChanged += recordButton_CheckedChanged;
             // 
-            // framesLabel
+            // scaleLabel
             // 
-            framesLabel.AutoSize = false;
-            framesLabel.BorderSides = ToolStripStatusLabelBorderSides.Right;
-            framesLabel.Name = "framesLabel";
-            framesLabel.Size = new Size(80, 19);
-            framesLabel.Text = "00000 frames";
-            framesLabel.TextAlign = ContentAlignment.MiddleRight;
+            scaleLabel.AutoSize = false;
+            scaleLabel.BorderSides = ToolStripStatusLabelBorderSides.Right;
+            scaleLabel.Name = "scaleLabel";
+            scaleLabel.Size = new Size(100, 24);
+            scaleLabel.Text = "3.5mm x 8s";
             // 
             // MainForm
             // 
-            AutoScaleDimensions = new SizeF(7F, 15F);
+            AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(692, 221);
+            ClientSize = new Size(791, 295);
             Controls.Add(splitContainer1);
             Controls.Add(statusStrip);
-            MinimumSize = new Size(0, 260);
+            Margin = new Padding(3, 4, 3, 4);
+            MinimumSize = new Size(18, 331);
             Name = "MainForm";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Tobii Interface";
@@ -259,5 +277,6 @@
         private CheckBox recordButton;
         private ToolStripStatusLabel fileLabel;
         private ToolStripStatusLabel framesLabel;
+        private ToolStripStatusLabel scaleLabel;
     }
 }
