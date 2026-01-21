@@ -414,7 +414,7 @@ namespace SpPerfChart
                 for (int k = 0; k < NumberOfLines; k++)
                 {
                     // Set if higher then previous max value
-                    if (drawValues[i][k] > maxValue)
+                    if (drawValues[i] != null && drawValues[i][k] > maxValue)
                         maxValue = drawValues[i][k];
                 }
             }

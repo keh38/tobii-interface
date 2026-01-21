@@ -1,4 +1,4 @@
-fn = 'C:\Users\hancock\Documents\TobiiRecordings\TobiiRecording-20260120-173556.tsr';
+fn = 'D:\Data\_shit\_shit-PupilDR-2026-01-21_124243.tsr';
 
 dataFormat = {
     'int64', [1 1], 'deviceTime';

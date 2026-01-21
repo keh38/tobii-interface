@@ -1,9 +1,11 @@
-using KLib.KGraphics;
 using Serilog;
 using System.Diagnostics;
 using System.Reflection;
+using System.Text;
 
 using Tobii.Research;
+
+using KLib.KGraphics;
 
 namespace tobii_interface
 {
@@ -20,14 +22,17 @@ namespace tobii_interface
         private Color _inRangeColor = Color.FromArgb(128, 255, 128);
         private Color _outOfRangeColor = Color.FromArgb(255, 128, 128);
 
+        private bool _isRunning = false;
         private bool _isRecording = false;
+        private bool _isRemote = false;
         private int _framesAcquired = 0;
+        private string _filePath = "";
 
         private Network _network;
 
         internal class CombinedEyeData
         {
-            public List<EyeData> eyeDataList = new List<EyeData>();   
+            public List<EyeData> eyeDataList = new List<EyeData>();
             public long deviceTimeStamp;
             public long systemTimeStamp;
             public CombinedEyeData(long deviceTimeStamp, long systemTimeStamp, EyeData left, EyeData right)
@@ -42,6 +47,8 @@ namespace tobii_interface
         private Queue<CombinedEyeData> _dataQueue = new Queue<CombinedEyeData>();
         private CancellationTokenSource _queueCancellationToken = new CancellationTokenSource();
 
+        public int Status { get { return _isRecording ? 1 : 0; } }
+
         public MainForm()
         {
             InitializeComponent();
@@ -55,13 +62,12 @@ namespace tobii_interface
                 Height = _settings.LastPosition.Height;
             }
 
-            _network = new Network();
+            _network = new Network(this);
 
-            distanceLabel.Text = "";
+            distanceLabel.Text = "---";
             fileLabel.Text = "";
-            scaleLabel.Text = "";
-            framesLabel.Text = "";
-            framesLabel.Visible = false;
+            scaleLabel.Text = "---";
+            framesLabel.Text = "---";
 
             runButton.Enabled = false;
             recordButton.Enabled = false;
@@ -73,7 +79,7 @@ namespace tobii_interface
                 Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData),
                 "EPL",
                 "Logs",
-                $"TobiiInterface-{DateTime.Now:yyyyMMdd}.txt");
+                $"TobiiInterface-{DateTime.Now:yyyyMMdd}.log");
 
             await Task.Run(() =>
             Log.Logger = new LoggerConfiguration()
@@ -118,6 +124,14 @@ namespace tobii_interface
             Log.CloseAndFlush();
         }
 
+        private void MainForm_Resize(object sender, EventArgs e)
+        {
+            if (_isRecording && !string.IsNullOrEmpty(_filePath))
+            {
+                CompactPath(fileLabel, _filePath);
+            }
+        }
+
         private void connectionTimer_Tick(object sender, EventArgs e)
         {
             connectionTimer.Interval = 1000;
@@ -142,13 +156,16 @@ namespace tobii_interface
             double right = args.RightEye.Pupil.Validity == Validity.Valid ? args.RightEye.Pupil.PupilDiameter : double.NaN;
 
             pupilChart.AddValue(left, right);
-            UpdateScaleLabel();
-
             if (_isRecording)
             {
                 var data = new CombinedEyeData(args.DeviceTimeStamp, args.SystemTimeStamp, args.LeftEye, args.RightEye);
                 _dataQueue.Enqueue(data);
             }
+            try
+            {
+                Invoke(new Action(() => UpdateScaleLabel()));
+            }
+            catch { }
         }
 
         private void UserPositionGuideReceived(object? sender, UserPositionGuideEventArgs args)
@@ -195,14 +212,13 @@ namespace tobii_interface
 
         private void UpdateScaleLabel()
         {
-            if (_eyeTracker != null) return;
-            
+            if (_eyeTracker == null) return;
+
             float fps = _eyeTracker.GetGazeOutputFrequency();
             float plotWidth = pupilChart.NumberOfFrames / fps;
             double plotHeight = pupilChart.CurrentRange;
 
             scaleLabel.Text = $"{plotHeight:F1}mm x {plotWidth:F2}s";
-
         }
 
         private void Calibrate()
@@ -277,6 +293,7 @@ namespace tobii_interface
             _eyeTracker.GazeDataReceived += GazeDataReceived;
             _eyeTracker.UserPositionGuideReceived += UserPositionGuideReceived;
 
+            _isRunning = true;
             recordButton.Enabled = true;
             runButton.Visible = false;
         }
@@ -288,6 +305,12 @@ namespace tobii_interface
             _eyeTracker.GazeDataReceived -= GazeDataReceived;
             _eyeTracker.UserPositionGuideReceived -= UserPositionGuideReceived;
 
+            if (_isRecording)
+            {
+                recordButton.Checked = false;
+            }
+
+            _isRunning = false;
             runButton.Visible = true;
             recordButton.Enabled = false;
         }
@@ -300,38 +323,61 @@ namespace tobii_interface
                 {
                     recordButton.Checked = false;
                     return;
-                }   
+                }
 
                 recordButton.BackColor = Color.FromArgb(228, 127, 127);
 
-                string folder = Path.Combine(
-                    Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
-                    "TobiiRecordings");
-
-                Directory.CreateDirectory(folder);
-
-                string filePath = Path.Combine(
-                    folder,
-                    $"TobiiRecording-{DateTime.Now:yyyyMMdd-HHmmss}.tsr");
-
-                StartRecording(filePath);
-
+                if (!_isRemote)
+                {
+                    StartRecordingLocal();
+                }
             }
             else
             {
                 recordButton.BackColor = SystemColors.Control;
+
+                Debug.WriteLine("stopping recording");
                 StopRecording();
             }
         }
 
+        private void StartRecordingLocal()
+        {
+            string folder = Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
+                "TobiiRecordings");
+
+            Directory.CreateDirectory(folder);
+
+            string filePath = Path.Combine(
+                folder,
+                $"TobiiRecording-{DateTime.Now:yyyyMMdd-HHmmss}.tsr");
+
+            StartRecording(filePath);
+        }
+
+        public void StartRecordingRemote(string filePath)
+        {
+            _isRemote = true;
+            if (!_isRunning)
+            {
+                Invoke(new Action(() => runButton_Click(null, null)));
+            }
+
+            Invoke(new Action(() => recordButton.Checked = true));
+
+            StartRecording(filePath);
+        }   
+
         private void StartRecording(string filePath)
         {
-            fileLabel.Text = Tools.CompactPath(filePath, fileLabel.Width, fileLabel.Font, TextFormatFlags.PathEllipsis);
+            _filePath = filePath;
+            CompactPath(fileLabel, filePath);
+            Log.Information($"saving data to {filePath}");
 
             _dataQueue.Clear();
             _framesAcquired = 0;
             framesLabel.Text = "0 frames";
-            framesLabel.Visible = true;
 
             _queueCancellationToken = new CancellationTokenSource();
             Task.Run(() =>
@@ -342,13 +388,72 @@ namespace tobii_interface
             _isRecording = true;
         }
 
+        public void StopRecordingRemote()
+        {
+            Invoke(new Action(() => recordButton.Checked = false));
+        }
+
         private void StopRecording()
         {
+            if (!_isRecording) return;
+
             _isRecording = false;
+            _isRemote = false;
+
             _queueCancellationToken.Cancel();
-            framesLabel.Visible = false;
+
             fileLabel.Text = "";
-            Debug.WriteLine($"{_framesAcquired} frames acquired");
+            framesLabel.Text = "";
+
+            Debug.WriteLine($"recording stopped, {_framesAcquired} frames acquired");
+        }
+
+        private void CompactPath(ToolStripStatusLabel pathLabel, string filePath)
+        {
+            string compactPath = filePath;
+            string filename = Path.GetFileName(filePath);
+            string folder = Path.GetDirectoryName(filePath) ?? "";
+
+            var sub = folder.Split(Path.DirectorySeparatorChar);
+
+            int lastSubIndex = sub.Length - 2;
+            int firstRemovedIndex = lastSubIndex;
+
+            using (Graphics g = pathLabel.GetCurrentParent().CreateGraphics())
+            {
+                while (true)
+                {
+                    var size = TextRenderer.MeasureText(g, compactPath, pathLabel.Font);
+
+                    if (size.Width <= pathLabel.Width)
+                    {
+                        break;
+                    }
+
+                    string toRemove = "";
+                    for (int k = firstRemovedIndex; k <= lastSubIndex; k++)
+                    {
+                        toRemove += sub[k] + Path.DirectorySeparatorChar;
+                    }
+
+                    compactPath = filePath.Replace(toRemove, "..." + Path.DirectorySeparatorChar);
+
+                    if (firstRemovedIndex > 1)
+                    {
+                        firstRemovedIndex--;
+                    }
+                    else if (lastSubIndex < sub.Length - 1)
+                    {
+                        lastSubIndex++;
+                    }
+                    else
+                    {
+                        break;
+                    }
+
+                }
+            }
+            pathLabel.Text = compactPath;
         }
 
         private void ProcessDataQueue(string filePath, CancellationToken ct)
@@ -378,7 +483,7 @@ namespace tobii_interface
                             float gazeX = eye.GazePoint.PositionOnDisplayArea.X;
                             float gazeY = eye.GazePoint.PositionOnDisplayArea.Y;
                             float pupilDiameter = eye.Pupil.Validity == Validity.Valid ? (float)eye.Pupil.PupilDiameter : float.NaN;
-                            
+
                             writer.Write(gazeValidity);
                             writer.Write(gazeX);
                             writer.Write(gazeY);
