@@ -11,6 +11,7 @@ using Serilog;
 
 using KLib;
 using KLib.Net;
+using Tobii.Research;
 
 namespace tobii_interface
 {
@@ -78,7 +79,8 @@ namespace tobii_interface
 
         private void ProcessTCPMessage(KTcpListener server)
         {
-            var receiveTime = HighPrecisionClock.UtcNowIn100nsTicks;
+//            var receiveTime = HighPrecisionClock.UtcNowIn100nsTicks;
+            var receiveTime = EyeTrackingOperations.GetSystemTimeStamp();
 
             server.AcceptTcpClient();
 
@@ -108,7 +110,8 @@ namespace tobii_interface
                     break;
                 case "Sync":
                     var byteArray = new byte[16];
-                    Buffer.BlockCopy(new long[] { receiveTime, HighPrecisionClock.UtcNowIn100nsTicks }, 0, byteArray, 0, 16);
+//                    Buffer.BlockCopy(new long[] { receiveTime, HighPrecisionClock.UtcNowIn100nsTicks }, 0, byteArray, 0, 16);
+                    Buffer.BlockCopy(new long[] { receiveTime, EyeTrackingOperations.GetSystemTimeStamp() }, 0, byteArray, 0, 16);
                     server.WriteByteArray(byteArray);
                     break;
             }
