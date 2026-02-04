@@ -79,8 +79,10 @@ namespace tobii_interface
 
         private void ProcessTCPMessage(KTcpListener server)
         {
-//            var receiveTime = HighPrecisionClock.UtcNowIn100nsTicks;
-            var receiveTime = EyeTrackingOperations.GetSystemTimeStamp();
+            //            var receiveTime = HighPrecisionClock.UtcNowIn100nsTicks;
+
+            // convert from us to 100-ns ticks for consistency with HighPrecisionClock
+            var receiveTime = 10 * EyeTrackingOperations.GetSystemTimeStamp();
 
             server.AcceptTcpClient();
 

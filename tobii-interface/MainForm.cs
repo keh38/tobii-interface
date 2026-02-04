@@ -477,10 +477,6 @@ namespace tobii_interface
                         var data = _dataQueue.Dequeue();
                         writer.Write(data.deviceTimeStamp);
                         writer.Write(data.systemTimeStamp);
-                        //                        writer.Write(Tobii.Research.EyeTrackingOperations.GetSystemTimeStamp());
-                        Debug.WriteLine($"sts: {data.systemTimeStamp}");
-                        Debug.WriteLine($"eto: {EyeTrackingOperations.GetSystemTimeStamp()}");
-                        Debug.WriteLine($"hpc: {HighPrecisionClock.UtcNowIn100nsTicks}");
 
                         foreach (var eye in data.eyeDataList)
                         {
