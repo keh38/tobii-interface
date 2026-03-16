@@ -10,18 +10,21 @@ using System.Threading.Tasks;
 using Serilog;
 
 using KLib;
+using KLib.IO;
 using KLib.Net;
 using Tobii.Research;
 
 namespace tobii_interface
 {
-    internal class Network
+    internal class Network : IDisposable
     {
-
+        private bool _disposed = false;
         private IPEndPoint EndPoint { get; set; }
 
         private CancellationTokenSource _serverCancellationToken = null;
         private MainForm _mainForm;
+
+        private DiscoveryBeacon _discoveryBeacon;
 
         public Network(MainForm mainForm)
         {
@@ -31,23 +34,43 @@ namespace tobii_interface
 
         public void Disconnect()
         {
-            if (_serverCancellationToken != null)
-            {
-                _serverCancellationToken.Cancel();
-            }
+            _discoveryBeacon?.Stop();
+            _serverCancellationToken?.Cancel();
         }
 
-        public void StartDiscoveryServer()
+        public void Dispose()
         {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (_disposed) return;
+
+            if (disposing)
+            {
+                Disconnect();                        // logical shutdown first
+                _serverCancellationToken?.Dispose(); // then release the CTS handle
+                _discoveryBeacon?.Dispose();            // if it's IDisposable
+            }
+
+            _disposed = true;
+        }
+
+        public void StartServer()
+        {
+            _discoveryBeacon = new DiscoveryBeacon(
+                "TOBII.INTERFACE",
+                EndPoint.Address.ToString(),
+                EndPoint.Port);
+
+            _discoveryBeacon.Start();
+
             _serverCancellationToken = new CancellationTokenSource();
             Task.Run(() =>
             {
                 Listener(EndPoint, _serverCancellationToken.Token);
-            }, _serverCancellationToken.Token);
-
-            Task.Run(() =>
-            {
-                MulticastReceiver("TOBII.INTERFACE", EndPoint, _serverCancellationToken.Token);
             }, _serverCancellationToken.Token);
         }
 
@@ -56,7 +79,7 @@ namespace tobii_interface
             var server = new KTcpListener();
             server.StartListener(endpoint);
 
-            Debug.WriteLine($"TCP server started on {server.ListeningOn}");
+            Debug.WriteLine($"TCP server started on {endpoint}");
 
             while (!ct.IsCancellationRequested)
             {
@@ -79,85 +102,62 @@ namespace tobii_interface
 
         private void ProcessTCPMessage(KTcpListener server)
         {
-            //            var receiveTime = HighPrecisionClock.UtcNowIn100nsTicks;
-
             // convert from us to 100-ns ticks for consistency with HighPrecisionClock
             var receiveTime = 10 * EyeTrackingOperations.GetSystemTimeStamp();
 
             server.AcceptTcpClient();
+            var request = server.ReadRequest();
 
-            string input = server.ReadString(acknowledge: false);
-
-            var parts = input.Split(new char[] { ':' }, 2);
-            string command = parts[0];
-            string data = "";
-            if (parts.Length > 1)
+            try
             {
-                data = parts[1];
-            }
-
-            switch (command)
-            {
-                case "Record":
-                    server.SendAcknowledgement();
-                    _mainForm.StartRecordingRemote(data.Replace(Path.GetExtension(data), ".tsr"));
-                    break;
-                case "Stop":
-                    server.SendAcknowledgement();
-                    _mainForm.StopRecordingRemote();
-                    break;
-                case "Status":
-                    Debug.WriteLine($"sending status {_mainForm.Status}");
-                    server.WriteInt32ToOutputStream(_mainForm.Status);
-                    break;
-                case "Sync":
-                    var byteArray = new byte[16];
-//                    Buffer.BlockCopy(new long[] { receiveTime, HighPrecisionClock.UtcNowIn100nsTicks }, 0, byteArray, 0, 16);
-                    Buffer.BlockCopy(new long[] { receiveTime, EyeTrackingOperations.GetSystemTimeStamp() }, 0, byteArray, 0, 16);
-                    server.WriteByteArray(byteArray);
-                    break;
-            }
-
-            server.CloseTcpClient();
-        }
-
-        private void MulticastReceiver(string name, IPEndPoint endpoint, CancellationToken ct)
-        {
-            var ipLocal = new IPEndPoint(endpoint.Address, 10000);
-
-            var address = IPAddress.Parse("234.5.6.7");
-            var ipEndPoint = new IPEndPoint(address, 10000);
-
-            var udp = new UdpClient();
-            udp.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
-            udp.Client.Bind(ipLocal);
-            udp.Client.ReceiveTimeout = 1000;
-
-            udp.JoinMulticastGroup(address, endpoint.Address);
-            Debug.WriteLine($"listening to multicast on {endpoint.Address}");
-
-            var anyIP = new IPEndPoint(IPAddress.Any, 0);
-
-            while (!ct.IsCancellationRequested)
-            {
-                try
+                switch (request.Command)
                 {
-                    // receive bytes
-                    var bytes = udp.Receive(ref anyIP);
-                    var response = Encoding.Default.GetString(bytes);
- 
-                    if (response.Equals(name))
-                    {
-                        bytes = Encoding.UTF8.GetBytes(endpoint.Port.ToString());
-                        udp.Send(bytes, bytes.Length, anyIP);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    //Debug.WriteLine(ex.Message);
+                    case "Record":
+                        server.WriteResponse(TcpMessage.Ok());
+                        var filename = request.GetPayload<string>();
+                        _mainForm.StartRecordingRemote(filename.Replace(Path.GetExtension(filename), ".tsr"));
+                        break;
+                    case "Stop":
+                        server.WriteResponse(TcpMessage.Ok());
+                        _mainForm.StopRecordingRemote();
+                        break;
+                    case "Ping":
+                        server.WriteResponse(TcpMessage.Ok());
+                        break;
+                    case "Status":
+                        server.WriteResponse(TcpMessage.Ok(new DataStreamStatusPayload()
+                        {
+                            Status = (int)_mainForm.Status
+                        }));
+                        break;
+                    case "Sync":
+                        var clockSyncData = new ClockSyncPayload()
+                        {
+                            T1 = receiveTime,
+                            T2 = 10 * EyeTrackingOperations.GetSystemTimeStamp()
+                        };
+                        server.WriteResponse(TcpMessage.Ok(clockSyncData));
+                        break;
+                    case "GetLog":
+                        var logFilePayload = new TextFilePayload()
+                        {
+                            Filename = Path.GetFileName(_mainForm.LogPath),
+                            Content = Files.ReadAllTextShared(_mainForm.LogPath)
+                        };
+                        server.WriteResponse(TcpMessage.Ok(logFilePayload));
+                        break;
+
                 }
             }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Error processing command {Command}", request.Command);
+                server.WriteResponse(TcpMessage.Error(ex.Message)); // if your protocol supports it
+            }
+            finally
+            {
+                server.CloseTcpClient();
+            }
         }
-
     }
 }

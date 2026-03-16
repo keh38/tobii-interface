@@ -1,5 +1,11 @@
 ## Changelog
 
+### v2.0 (unreleased)
+#### Changed
+- Updated discovery/messaging system
+
+---
+
 ### v1.2.1 (2026-03-05)
 #### Fixed
 - added validation to ensure it does not restore itself off screen

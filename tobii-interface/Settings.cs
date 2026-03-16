@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using Tobii.Research;
 
+using KLib.IO;
+
 namespace tobii_interface
 {
     public class Settings
@@ -15,7 +17,7 @@ namespace tobii_interface
 
         public void Save()
         {
-            KLib.FileIO.XmlSerialize<Settings>(this, FilePath);
+            Files.XmlSerialize<Settings>(this, FilePath);
         }
 
         public static Settings Restore()
@@ -23,7 +25,7 @@ namespace tobii_interface
             Settings settings = new Settings();
             if (File.Exists(FilePath))
             {
-                settings = KLib.FileIO.XmlDeserialize<Settings>(FilePath);
+                settings = Files.XmlDeserialize<Settings>(FilePath);
             }
             return settings;
         }

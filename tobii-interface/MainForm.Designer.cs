@@ -20,6 +20,7 @@
             }
             if (disposing && (components != null))
             {
+                _network?.Dispose();
                 components.Dispose();
             }
             base.Dispose(disposing);

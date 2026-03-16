@@ -49,6 +49,7 @@ namespace tobii_interface
         private CancellationTokenSource _queueCancellationToken = new CancellationTokenSource();
 
         public int Status { get { return _isRecording ? 1 : 0; } }
+        public string LogPath { get { return _logPath; } }
 
         public MainForm()
         {
@@ -57,10 +58,40 @@ namespace tobii_interface
 
             if (!_settings.LastPosition.IsEmpty)
             {
-                StartPosition = FormStartPosition.Manual;
-                Location = new Point(_settings.LastPosition.X, _settings.LastPosition.Y);
-                Width = _settings.LastPosition.Width;
-                Height = _settings.LastPosition.Height;
+                //StartPosition = FormStartPosition.Manual;
+                //Location = new Point(_settings.LastPosition.X, _settings.LastPosition.Y);
+                //Width = _settings.LastPosition.Width;
+                //Height = _settings.LastPosition.Height;
+                if (!_settings.LastPosition.IsEmpty)
+                {
+                    // Validate that the saved position is still visible on screen
+                    Rectangle savedBounds = _settings.LastPosition;
+                    bool isVisible = false;
+
+                    foreach (Screen screen in Screen.AllScreens)
+                    {
+                        if (screen.WorkingArea.IntersectsWith(savedBounds))
+                        {
+                            isVisible = true;
+                            break;
+                        }
+                    }
+
+                    if (isVisible)
+                    {
+                        StartPosition = FormStartPosition.Manual;
+                        Location = new Point(savedBounds.X, savedBounds.Y);
+                        Width = savedBounds.Width;
+                        Height = savedBounds.Height;
+                    }
+                    else
+                    {
+                        // Position is off-screen, use default positioning
+                        StartPosition = FormStartPosition.CenterScreen;
+                        // Optionally clear the invalid position
+                        _settings.LastPosition = Rectangle.Empty;
+                    }
+                }
             }
 
             _network = new Network(this);
@@ -109,15 +140,13 @@ namespace tobii_interface
             trackerStatusLabel.Text = "No tracker found";
 
             Log.Information("Starting discovery server");
-            _network.StartDiscoveryServer();
+            _network.StartServer();
 
             connectionTimer.Start();
         }
 
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
-            _network.Disconnect();
-
             _settings.LastPosition = new Rectangle(Location.X, Location.Y, Width, Height);
             _settings.Save();
 
