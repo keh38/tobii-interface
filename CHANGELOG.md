@@ -1,6 +1,6 @@
 ## Changelog
 
-### v2.0 (unreleased)
+### v2.0 (2026-03-17)
 #### Changed
 - Updated discovery/messaging system
 
