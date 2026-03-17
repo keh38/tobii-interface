@@ -56,41 +56,38 @@ namespace tobii_interface
             InitializeComponent();
             _settings = Settings.Restore();
 
+            //StartPosition = FormStartPosition.Manual;
+            //Location = new Point(_settings.LastPosition.X, _settings.LastPosition.Y);
+            //Width = _settings.LastPosition.Width;
+            //Height = _settings.LastPosition.Height;
             if (!_settings.LastPosition.IsEmpty)
             {
-                //StartPosition = FormStartPosition.Manual;
-                //Location = new Point(_settings.LastPosition.X, _settings.LastPosition.Y);
-                //Width = _settings.LastPosition.Width;
-                //Height = _settings.LastPosition.Height;
-                if (!_settings.LastPosition.IsEmpty)
+                // Validate that the saved position is still visible on screen
+                Rectangle savedBounds = _settings.LastPosition;
+                bool isVisible = false;
+
+                foreach (Screen screen in Screen.AllScreens)
                 {
-                    // Validate that the saved position is still visible on screen
-                    Rectangle savedBounds = _settings.LastPosition;
-                    bool isVisible = false;
+                    if (screen.WorkingArea.IntersectsWith(savedBounds))
+                    {
+                        isVisible = true;
+                        break;
+                    }
+                }
 
-                    foreach (Screen screen in Screen.AllScreens)
-                    {
-                        if (screen.WorkingArea.IntersectsWith(savedBounds))
-                        {
-                            isVisible = true;
-                            break;
-                        }
-                    }
-
-                    if (isVisible)
-                    {
-                        StartPosition = FormStartPosition.Manual;
-                        Location = new Point(savedBounds.X, savedBounds.Y);
-                        Width = savedBounds.Width;
-                        Height = savedBounds.Height;
-                    }
-                    else
-                    {
-                        // Position is off-screen, use default positioning
-                        StartPosition = FormStartPosition.CenterScreen;
-                        // Optionally clear the invalid position
-                        _settings.LastPosition = Rectangle.Empty;
-                    }
+                if (isVisible)
+                {
+                    StartPosition = FormStartPosition.Manual;
+                    Location = new Point(savedBounds.X, savedBounds.Y);
+                    Width = savedBounds.Width;
+                    Height = savedBounds.Height;
+                }
+                else
+                {
+                    // Position is off-screen, use default positioning
+                    StartPosition = FormStartPosition.CenterScreen;
+                    // Optionally clear the invalid position
+                    _settings.LastPosition = Rectangle.Empty;
                 }
             }
 
