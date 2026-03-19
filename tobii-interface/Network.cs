@@ -115,7 +115,7 @@ namespace tobii_interface
                     case "Record":
                         server.WriteResponse(TcpMessage.Ok());
                         var filename = request.GetPayload<string>();
-                        _mainForm.StartRecordingRemote(filename.Replace(Path.GetExtension(filename), ".tsr"));
+                        _ = Task.Run(() => _mainForm.StartRecordingRemote(filename.Replace(Path.GetExtension(filename), ".tsr")));
                         break;
                     case "Stop":
                         server.WriteResponse(TcpMessage.Ok());

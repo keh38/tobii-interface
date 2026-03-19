@@ -1,4 +1,4 @@
-using Serilog;
+﻿using Serilog;
 using System.Diagnostics;
 using System.Reflection;
 using System.Text;
@@ -25,7 +25,6 @@ namespace tobii_interface
 
         private bool _isRunning = false;
         private bool _isRecording = false;
-        private bool _isRemote = false;
         private int _framesAcquired = 0;
         private string _filePath = "";
 
@@ -56,10 +55,6 @@ namespace tobii_interface
             InitializeComponent();
             _settings = Settings.Restore();
 
-            //StartPosition = FormStartPosition.Manual;
-            //Location = new Point(_settings.LastPosition.X, _settings.LastPosition.Y);
-            //Width = _settings.LastPosition.Width;
-            //Height = _settings.LastPosition.Height;
             if (!_settings.LastPosition.IsEmpty)
             {
                 // Validate that the saved position is still visible on screen
@@ -113,7 +108,7 @@ namespace tobii_interface
             await Task.Run(() =>
             Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Verbose()
-                .WriteTo.Console()
+                .WriteTo.Debug()
                 .WriteTo.File(path: Path.Combine(_logPath),
                               retainedFileCountLimit: 30,
                               flushToDiskInterval: TimeSpan.FromSeconds(5),
@@ -121,8 +116,9 @@ namespace tobii_interface
                 .CreateLogger()
                 );
 
-            var listener = new SerilogTraceListener.SerilogTraceListener();
-            Trace.Listeners.Add(listener);
+            //Trace.Listeners.Remove("Default");
+            //var listener = new SerilogTraceListener.SerilogTraceListener();
+            //Trace.Listeners.Add(listener);
         }
 
         private void MainForm_Load(object sender, EventArgs e) { }
@@ -313,9 +309,11 @@ namespace tobii_interface
             Calibrate();
         }
 
-        private void runButton_Click(object sender, EventArgs e)
+        // ── tracker lifecycle ──────────────────────────────────────────────────────
+
+        private void StartTracker()
         {
-            if (_eyeTracker == null) return;
+            if (_eyeTracker == null || _isRunning) return;
 
             _eyeTracker.GazeDataReceived += GazeDataReceived;
             _eyeTracker.UserPositionGuideReceived += UserPositionGuideReceived;
@@ -325,48 +323,57 @@ namespace tobii_interface
             runButton.Visible = false;
         }
 
-        private void stopButton_Click(object sender, EventArgs e)
+        private void StopTracker()
         {
             if (_eyeTracker == null) return;
 
             _eyeTracker.GazeDataReceived -= GazeDataReceived;
             _eyeTracker.UserPositionGuideReceived -= UserPositionGuideReceived;
 
-            if (_isRecording)
-            {
-                recordButton.Checked = false;
-            }
-
             _isRunning = false;
             runButton.Visible = true;
             recordButton.Enabled = false;
         }
 
+        private void runButton_Click(object sender, EventArgs e) => StartTracker();
+
+        private void stopButton_Click(object sender, EventArgs e)
+        {
+            if (_isRecording) StopRecording();
+            StopTracker();
+        }
+
+        // ── record button ──────────────────────────────────────────────────────────
+
         private void recordButton_CheckedChanged(object sender, EventArgs e)
         {
             if (recordButton.Checked)
             {
-                if (_eyeTracker == null)
-                {
-                    recordButton.Checked = false;
-                    return;
-                }
+                if (_eyeTracker == null) { recordButton.Checked = false; return; }
 
                 recordButton.BackColor = Color.FromArgb(228, 127, 127);
 
-                if (!_isRemote)
+                if (!_isRecording)
                 {
-                    StartRecordingLocal();
+                    try
+                    {
+                        StartRecordingLocal();
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Error(ex, "Failed to start local recording");
+                        recordButton.Checked = false;   // triggers CheckedChanged → else branch → resets backcolor + calls StopRecording (no-ops safely)
+                    }
                 }
             }
             else
             {
                 recordButton.BackColor = SystemColors.Control;
-
-                Debug.WriteLine("stopping recording");
                 StopRecording();
             }
         }
+
+        // ── recording core ─────────────────────────────────────────────────────────
 
         private void StartRecordingLocal()
         {
@@ -385,39 +392,49 @@ namespace tobii_interface
 
         public void StartRecordingRemote(string filePath)
         {
-            _isRemote = true;
             if (!_isRunning)
-            {
-                Invoke(new Action(() => runButton_Click(null, null)));
+                Invoke(new Action(StartTracker));
+
+            StartRecording(filePath);                                    // _isRecording → true
+
+            if (_isRecording)
+            { 
+                Invoke(new Action(() => recordButton.Checked = true));       // CheckedChanged sees _isRecording, skips StartRecordingLocal
             }
-
-            Invoke(new Action(() => recordButton.Checked = true));
-
-            StartRecording(filePath);
-        }   
-
-        private void StartRecording(string filePath)
-        {
-            _filePath = filePath;
-            CompactPath(fileLabel, filePath);
-            Log.Information($"saving data to {filePath}");
-
-            _dataQueue.Clear();
-            _framesAcquired = 0;
-            framesLabel.Text = "0 frames";
-
-            _queueCancellationToken = new CancellationTokenSource();
-            Task.Run(() =>
-            {
-                ProcessDataQueue(filePath, _queueCancellationToken.Token);
-            }, _queueCancellationToken.Token);
-
-            _isRecording = true;
         }
 
         public void StopRecordingRemote()
         {
-            Invoke(new Action(() => recordButton.Checked = false));
+            StopRecording();                                             // _isRecording → false
+
+            Invoke(new Action(() => recordButton.Checked = false));      // CheckedChanged calls StopRecording, which no-ops on !_isRecording
+        }
+
+        private void StartRecording(string filePath)
+        {
+            try
+            {
+                _filePath = filePath;
+                CompactPath(fileLabel, filePath);
+                Log.Information($"saving data to {filePath}");
+
+                _dataQueue.Clear();
+                _framesAcquired = 0;
+                framesLabel.Text = "0 frames";
+
+                _queueCancellationToken = new CancellationTokenSource();
+                Task.Run(() => ProcessDataQueue(filePath, _queueCancellationToken.Token),
+                         _queueCancellationToken.Token);
+            }
+            catch (Exception ex)
+            {
+                _isRecording = false;
+
+                Log.Error($"Error starting recording: {ex.Message}");
+                return;
+            }
+
+            _isRecording = true;
         }
 
         private void StopRecording()
@@ -425,7 +442,6 @@ namespace tobii_interface
             if (!_isRecording) return;
 
             _isRecording = false;
-            _isRemote = false;
 
             _queueCancellationToken.Cancel();
 
@@ -437,50 +453,62 @@ namespace tobii_interface
 
         private void CompactPath(ToolStripStatusLabel pathLabel, string filePath)
         {
-            string compactPath = filePath;
-            string filename = Path.GetFileName(filePath);
-            string folder = Path.GetDirectoryName(filePath) ?? "";
-
-            var sub = folder.Split(Path.DirectorySeparatorChar);
-
-            int lastSubIndex = sub.Length - 2;
-            int firstRemovedIndex = lastSubIndex;
-
             using (Graphics g = pathLabel.GetCurrentParent().CreateGraphics())
             {
-                while (true)
+                bool Fits(string s) => TextRenderer.MeasureText(g, s, pathLabel.Font).Width <= pathLabel.Width;
+
+                // Already fits — done
+                if (Fits(filePath))
                 {
-                    var size = TextRenderer.MeasureText(g, compactPath, pathLabel.Font);
-
-                    if (size.Width <= pathLabel.Width)
-                    {
-                        break;
-                    }
-
-                    string toRemove = "";
-                    for (int k = firstRemovedIndex; k <= lastSubIndex; k++)
-                    {
-                        toRemove += sub[k] + Path.DirectorySeparatorChar;
-                    }
-
-                    compactPath = filePath.Replace(toRemove, "..." + Path.DirectorySeparatorChar);
-
-                    if (firstRemovedIndex > 1)
-                    {
-                        firstRemovedIndex--;
-                    }
-                    else if (lastSubIndex < sub.Length - 1)
-                    {
-                        lastSubIndex++;
-                    }
-                    else
-                    {
-                        break;
-                    }
-
+                    pathLabel.Text = filePath;
+                    return;
                 }
+
+                string folder = Path.GetDirectoryName(filePath) ?? "";
+                string filename = Path.GetFileName(filePath);
+
+                // No folder to truncate — show filename only
+                if (string.IsNullOrEmpty(folder))
+                {
+                    pathLabel.Text = filename;
+                    return;
+                }
+
+                // Progressively replace folder segments with ...
+                var segments = folder.Split(Path.DirectorySeparatorChar);
+                int lo = segments.Length - 1;
+                int hi = lo;
+
+                while (lo >= 0)
+                {
+                    var kept = segments.Take(lo)
+                                       .Concat(new[] { "..." })
+                                       .Concat(segments.Skip(hi + 1));
+
+                    string compactFolder = string.Join(Path.DirectorySeparatorChar.ToString(), kept);
+                    string candidate = Path.Combine(compactFolder, filename);
+
+                    if (Fits(candidate))
+                    {
+                        pathLabel.Text = candidate;
+                        return;
+                    }
+
+                    if (lo > 0)
+                        lo--;
+                    else
+                        hi++;
+
+                    // Eaten everything — just show filename
+                    if (hi >= segments.Length)
+                    {
+                        pathLabel.Text = filename;
+                        return;
+                    }
+                }
+
+                pathLabel.Text = filename;
             }
-            pathLabel.Text = compactPath;
         }
 
         private void ProcessDataQueue(string filePath, CancellationToken ct)
