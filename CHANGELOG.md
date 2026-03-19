@@ -1,6 +1,6 @@
 ## Changelog
 
-### v2.0.1 (unreleased)
+### v2.0.1 (2026-03-19)
 #### Fixed
 - pathname exception
 
