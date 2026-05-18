@@ -430,7 +430,7 @@ namespace SpPerfChart
             {
                 for (int k = 0; k < NumberOfLines; k++)
                 {
-                    if (drawValues[i][k] < minValue)
+                    if (drawValues[i] != null && drawValues[i][k] < minValue)
                         minValue = drawValues[i][k];
                 }
             }
