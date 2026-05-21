@@ -1,5 +1,11 @@
 ## Changelog
 
+### v2.0.2 (2026-05-21)
+#### Fixed
+- plotting error causing plot to "red X" out
+
+---
+
 ### v2.0.1 (2026-03-19)
 #### Fixed
 - pathname exception

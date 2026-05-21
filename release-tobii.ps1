@@ -8,7 +8,7 @@ $ErrorActionPreference = "Stop"
 $env:Path = [System.Environment]::GetEnvironmentVariable("Path", "Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path", "User")
 
 # --- Configuration -----------------------------------------------------------
-$Version        = "2.0.1"
+$Version        = "2.0.2"
 # Pad to exactly 4 parts for AssemblyVersion / FileVersion
 $vParts          = $Version.Split('.')
 $AssemblyVersion = ($vParts + @('0','0','0'))[ 0..3 ] -join '.'
@@ -94,7 +94,7 @@ Write-Host "Installer found."
 Step "Committing and pushing changes"
 
 Push-Location $RepoRoot
-git add "$CsprojFile" "$Changelog"
+git add "$CsprojFile" "$Changelog" $CsprojFile "$RepoRoot\release-tobii.ps1" 
 git commit -m $CommitMessage
 git push
 Pop-Location
