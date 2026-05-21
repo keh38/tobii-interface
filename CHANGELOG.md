@@ -2,7 +2,7 @@
 
 ### v2.0.2 (2026-05-21)
 #### Fixed
-- plotting error causing plot to "red X" out
+- plotting error causing plot to 'red X' out
 
 ---
 
