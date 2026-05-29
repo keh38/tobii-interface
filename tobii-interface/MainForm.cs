@@ -8,6 +8,7 @@ using Tobii.Research;
 
 using KLib.KGraphics;
 using KLib;
+using System.Windows.Forms;
 
 namespace tobii_interface
 {
@@ -316,12 +317,18 @@ namespace tobii_interface
 
         private async void HandleCalibrationStart(string address, int port)
         {
+            if (InvokeRequired)
+            {
+                Invoke(() => HandleCalibrationStart(address, port));
+                return;
+            }
+
             StopTracker();
 
-            await Task.Run(() =>
+            Invoke(() =>
             {
-                var dlg = new CalibrationForm(_network, new IPEndPoint(IPAddress.Parse(address), port));
-                dlg.ShowDialog();
+                var dlg = new CalibrationForm(_eyeTracker, _network, new IPEndPoint(IPAddress.Parse(address), port));
+                dlg.ShowDialog(this);
             });
 
             StartTracker();
@@ -331,6 +338,12 @@ namespace tobii_interface
 
         private void StartTracker()
         {
+            if (InvokeRequired)
+            {
+                Invoke(() => StartTracker());
+                return;
+            }
+
             if (_eyeTracker == null || _isRunning) return;
 
             _eyeTracker.GazeDataReceived += GazeDataReceived;
@@ -343,6 +356,12 @@ namespace tobii_interface
 
         private void StopTracker()
         {
+            if (InvokeRequired)
+            {
+                Invoke(() => StopTracker());
+                return;
+            }
+
             if (_eyeTracker == null) return;
 
             _eyeTracker.GazeDataReceived -= GazeDataReceived;
