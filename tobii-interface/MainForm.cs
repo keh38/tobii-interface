@@ -1,5 +1,6 @@
 ﻿using Serilog;
 using System.Diagnostics;
+using System.Net;
 using System.Reflection;
 using System.Text;
 
@@ -134,12 +135,15 @@ namespace tobii_interface
 
             Log.Information("Starting discovery server");
             _network.StartServer();
+            _network.OnStartCalibration += HandleCalibrationStart;
 
             connectionTimer.Start();
         }
 
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
+            _network.OnStartCalibration -= HandleCalibrationStart;
+
             _settings.LastPosition = new Rectangle(Location.X, Location.Y, Width, Height);
             _settings.Save();
 
@@ -304,9 +308,23 @@ namespace tobii_interface
             }
         }
 
+        // ──  Calibration ───────────────────────────────────────────────────────────
         private void calibrateButton_Click(object sender, EventArgs e)
         {
             Calibrate();
+        }
+
+        private async void HandleCalibrationStart(string address, int port)
+        {
+            StopTracker();
+
+            await Task.Run(() =>
+            {
+                var dlg = new CalibrationForm(_network, new IPEndPoint(IPAddress.Parse(address), port));
+                dlg.ShowDialog();
+            });
+
+            StartTracker();
         }
 
         // ── tracker lifecycle ──────────────────────────────────────────────────────

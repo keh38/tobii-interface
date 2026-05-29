@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
@@ -8,12 +8,13 @@
     <UseWindowsForms>true</UseWindowsForms>
     <ImplicitUsings>enable</ImplicitUsings>
     <Platforms>AnyCPU;x64</Platforms>
-	  <FileVersion>2.0.2.0</FileVersion>
-	  <AssemblyVersion>2.0.2.0</AssemblyVersion>
-	  <Version>2.0.2</Version>
+	  <FileVersion>2.1.0</FileVersion>
+	  <AssemblyVersion>2.1.0</AssemblyVersion>
+	  <Version>2.1.0</Version>
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="C462.Shared" Version="1.15.2" />
     <PackageReference Include="KLib" Version="1.6.0" />
     <PackageReference Include="KLib.Net" Version="2.1.0" />
     <PackageReference Include="Serilog" Version="4.3.0" />

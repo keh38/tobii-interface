@@ -14,6 +14,9 @@ using KLib.IO;
 using KLib.Net;
 using Tobii.Research;
 
+using C462.Shared.Protocol.DTOs;
+using System.Runtime.InteropServices;
+
 namespace tobii_interface
 {
     internal class Network : IDisposable
@@ -25,6 +28,9 @@ namespace tobii_interface
         private MainForm _mainForm;
 
         private DiscoveryBeacon _discoveryBeacon;
+
+        public event Action<string, int> OnStartCalibration;
+        public event Action OnStopCalibration;
 
         public Network(MainForm mainForm)
         {
@@ -146,7 +152,16 @@ namespace tobii_interface
                         };
                         server.WriteResponse(TcpMessage.Ok(logFilePayload));
                         break;
-
+                    case "StartCalibration":
+                        server.WriteResponse(TcpMessage.Ok());
+                        var connectionPayload = request.GetPayload<ConnectionRequestPayload>();
+                        OnStartCalibration?.Invoke(connectionPayload.Address, connectionPayload.Port);
+                        break;
+                    case "StopCalibration":
+                        Debug.WriteLine($"Received StopCalibration command at {DateTime.Now}");
+                        server.WriteResponse(TcpMessage.Ok());
+                        OnStopCalibration?.Invoke();
+                        break;
                 }
             }
             catch (Exception ex)
