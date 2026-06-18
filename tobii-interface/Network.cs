@@ -121,16 +121,20 @@ namespace tobii_interface
                     case "Record":
                         server.WriteResponse(TcpMessage.Ok());
                         var filename = request.GetPayload<string>();
+                        Log.Information($"{request.Command}: {filename}");
                         _ = Task.Run(() => _mainForm.StartRecordingRemote(filename.Replace(Path.GetExtension(filename), ".tsr")));
                         break;
                     case "Stop":
+                        Log.Information($"{request.Command}");
                         server.WriteResponse(TcpMessage.Ok());
                         _mainForm.StopRecordingRemote();
                         break;
                     case "Ping":
+                        Log.Information($"{request.Command}");
                         server.WriteResponse(TcpMessage.Ok());
                         break;
                     case "Status":
+                        Log.Information($"{request.Command}");
                         server.WriteResponse(TcpMessage.Ok(new DataStreamStatusPayload()
                         {
                             Status = (int)_mainForm.Status
@@ -145,6 +149,7 @@ namespace tobii_interface
                         server.WriteResponse(TcpMessage.Ok(clockSyncData));
                         break;
                     case "GetLog":
+                        Log.Information($"{request.Command}");
                         var logFilePayload = new TextFilePayload()
                         {
                             Filename = Path.GetFileName(_mainForm.LogPath),
@@ -153,12 +158,13 @@ namespace tobii_interface
                         server.WriteResponse(TcpMessage.Ok(logFilePayload));
                         break;
                     case "StartCalibration":
+                        Log.Information($"{request.Command}");
                         server.WriteResponse(TcpMessage.Ok());
                         var connectionPayload = request.GetPayload<ConnectionRequestPayload>();
                         OnStartCalibration?.Invoke(connectionPayload.Address, connectionPayload.Port);
                         break;
                     case "StopCalibration":
-                        Debug.WriteLine($"Received StopCalibration command at {DateTime.Now}");
+                        Log.Information($"{request.Command}");
                         server.WriteResponse(TcpMessage.Ok());
                         OnStopCalibration?.Invoke();
                         break;
